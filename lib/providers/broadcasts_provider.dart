@@ -50,31 +50,39 @@ class BroadcastedServicesProvider extends ChangeNotifier {
 
   /// Start the service broadcasting.
   Future<void> broadcastService(BonsoirService service) async {
-    BonsoirBroadcast broadcast = BonsoirBroadcast(service: service);
+    print('📡 Initializing broadcast for service: ${service.toJson()}');
 
-    await broadcast.ready;
+    final broadcast = BonsoirBroadcast(service: service);
+    await broadcast.initialize();
+
+    print('📡 Broadcast initialized for service: ${service.toJson()}');
 
     broadcast.eventStream!.listen((event) {
-      if (event.type == BonsoirBroadcastEventType.broadcastNameAlreadyExists) {
-        print('Service already exists');
+      if (event is BonsoirBroadcastStartedEvent) {
+        print('📡 Broadcast started for service: ${service.toJson()}');
+      } else if (event is BonsoirBroadcastStoppedEvent) {
+        print('📡 Broadcast stopped for service: ${service.toJson()}');
         _broadcasts.remove(broadcast);
-      } else if (event.type == BonsoirBroadcastEventType.broadcastStopped) {
-        print('Service stopped');
-      } else if (event.type == BonsoirBroadcastEventType.broadcastStarted) {
-        print('Service started');
-      } else if (event.type == BonsoirBroadcastEventType.unknown) {
-        print('Error: ${event}');
+        notifyListeners();
+      } else if (event is BonsoirBroadcastNameAlreadyExistsEvent) {
+        print('📡 Broadcast name already exists for service: ${service.toJson()}');
         _broadcasts.remove(broadcast);
+        notifyListeners();
+      } else if (event is BonsoirBroadcastUnknownEvent) {
+        print('📡 Broadcast unknown event for service: ${service.toJson()} - $event');
+      } else {
+        print('📡 Broadcast unhandled event for service: ${service.toJson()} - $event');
       }
-      notifyListeners();
     }, onError: (error) {
-      print('Error2: ${error}');
+      print('📡 Broadcast error for service: ${service.toJson()} - $error');
     }, onDone: () {
-      print('Done');
-    });
+      print('📡 Broadcast done for service: ${service.toJson()}');
+    }, cancelOnError: true);
 
     await broadcast.start();
-    print('--> Broadcasting service: ${broadcast}');
+
+    print('📡 Broadcast started for service: ${service.toJson()}');
+
     _broadcasts.add(broadcast);
     notifyListeners();
   }

@@ -3,7 +3,7 @@ import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
 
 class ResolvedServiceList extends StatelessWidget {
-  final List<ResolvedBonsoirService> services;
+  final List<BonsoirService> services;
 
   const ResolvedServiceList({super.key, required this.services});
 
@@ -30,7 +30,7 @@ class ResolvedServiceList extends StatelessWidget {
 }
 
 class ResolvedServiceRow extends StatelessWidget {
-  final ResolvedBonsoirService service;
+  final BonsoirService service;
 
   const ResolvedServiceRow({super.key, required this.service});
 
@@ -50,7 +50,8 @@ class ResolvedServiceRow extends StatelessWidget {
             const SizedBox(height: 4),
             _ServiceInformationRow(title: 'Type', value: service.type),
             _ServiceInformationRow(title: 'Port', value: service.port.toString()),
-            _ServiceInformationRow(title: 'Host', value: service.host ?? 'Unknown'),
+            _ServiceInformationRow(title: 'Hostname', value: service.hostname ?? 'Unknown'),
+            _ServiceInformationRow(title: 'Host', value: service.hostAddress ?? 'Unknown'),
             if (service.attributes.isNotEmpty) ...[
               const SizedBox(height: 4),
               const Center(

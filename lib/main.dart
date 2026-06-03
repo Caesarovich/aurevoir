@@ -41,7 +41,7 @@ void main() async {
         ChangeNotifierProxyProvider2<SettingsProvider, ServiceTypeProvider, ServiceProvider>(
             create: (_) => ServiceProvider(),
             update: (_, settingsProvider, serviceTypeProvider, serviceProvider) => serviceProvider!
-              ..setResolveServices(settingsProvider.resolveServices)
+              ..setShouldResolveServices(settingsProvider.resolveServices)
               ..updateServiceTypes(serviceTypeProvider.serviceTypes)),
       ],
       child: const MyApp(),
