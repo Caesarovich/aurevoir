@@ -117,7 +117,7 @@ class BroadcastedServiceRow extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(broadcast.service.name),
-        leading: const Icon(Icons.wifi),
+        leading: broadcast.isReady ? const Icon(Icons.wifi) : const Icon(Icons.wifi_off),
         subtitle: Text(
             '${broadcast.service.type} : ${broadcast.service.port.toString()}  (${broadcast.isReady ? 'Ready' : 'Not ready'}) (${broadcast.isStopped ? 'Stopped' : 'Running'})'),
         trailing: Row(
