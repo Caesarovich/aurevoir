@@ -62,7 +62,6 @@ class BroadcastedServicesProvider extends ChangeNotifier {
         print('📡 Broadcast started for service: ${service.toJson()}');
       } else if (event is BonsoirBroadcastStoppedEvent) {
         print('📡 Broadcast stopped for service: ${service.toJson()}');
-        _broadcasts.remove(broadcast);
         notifyListeners();
       } else if (event is BonsoirBroadcastNameAlreadyExistsEvent) {
         print('📡 Broadcast name already exists for service: ${service.toJson()}');
