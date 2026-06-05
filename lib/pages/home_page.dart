@@ -3,17 +3,7 @@ import 'package:aurevoir/pages/services_lists_page.dart';
 import 'package:aurevoir/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 
-class NavigationItem {
-  final Widget screen;
-  final String title;
-  final IconData icon;
-
-  NavigationItem({
-    required this.screen,
-    required this.title,
-    required this.icon,
-  });
-}
+import 'package:aurevoir/widgets/adaptive_nav_shell.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,44 +13,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedScreenIndex = 0;
-
-  final List<NavigationItem> _screens = [
-    NavigationItem(
-      screen: const ServiceListPage(),
-      title: 'Services',
-      icon: Icons.home,
+  final List<NavigationDestination> _destinations = [
+    NavigationDestination(
+      label: 'Services',
+      icon: Icon(Icons.list),
     ),
-    NavigationItem(
-      screen: const BroadcastListPage(),
-      title: 'My Broadcasts',
-      icon: Icons.wifi_tethering,
+    NavigationDestination(
+      label: 'Broadcasts',
+      icon: Icon(Icons.wifi_tethering),
     ),
-    NavigationItem(screen: const SettingsPage(), title: "Settings", icon: Icons.settings)
+    NavigationDestination(
+      label: 'Settings',
+      icon: Icon(Icons.settings),
+    ),
   ];
 
-  void _selectScreen(int index) {
-    setState(() {
-      _selectedScreenIndex = index;
-    });
-  }
+  final List<Widget> _pages = [
+    const ServiceListPage(),
+    const BroadcastListPage(),
+    const SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_selectedScreenIndex].screen,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedScreenIndex,
-        onTap: _selectScreen,
-        items: _screens
-            .map(
-              (screen) => BottomNavigationBarItem(
-                icon: Icon(screen.icon),
-                label: screen.title,
-              ),
-            )
-            .toList(),
-      ),
+    return AdaptiveNavShell(
+      width: MediaQuery.sizeOf(context).width,
+      breakpoint: 900,
+      destinations: _destinations,
+      pages: _pages,
     );
   }
 }
