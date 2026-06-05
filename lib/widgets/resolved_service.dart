@@ -102,9 +102,13 @@ class ResolvedServiceRow extends StatelessWidget {
     return serviceTypeIcons[serviceType] ?? Icons.device_unknown;
   }
 
-  String get hostAddresses {
-    if (service.hostAddresses.isEmpty) return 'Unknown';
-    return service.hostAddresses.join(', ');
+  List<String> get hostAddresses {
+    final List<String> hosts = [
+      if (service.hostname != null) service.hostname!,
+      ...service.hostAddresses,
+    ];
+
+    return hosts.isNotEmpty ? hosts : ['Unknown'];
   }
 
   @override
@@ -115,58 +119,107 @@ class ResolvedServiceRow extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 6,
+          spacing: 8,
           children: [
-            Row(
-              spacing: 6.0,
+            SizedBox(
+              height: 54,
+              child: Row(
+                spacing: 8,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 54,
+                    height: 54,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Icon(serviceIcon, color: Theme.of(context).colorScheme.onPrimary, size: 36),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceBright,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                service.name,
+                                maxLines: 1,
+                                softWrap: false,
+                                style: Theme.of(context).textTheme.titleSmall,
+                              ),
+                              Text(
+                                service.type,
+                                maxLines: 1,
+                                softWrap: false,
+                                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceBright,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('PORT',
+                              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                          Text(service.port.toString(), style: Theme.of(context).textTheme.titleSmall),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              alignment: WrapAlignment.start,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                Icon(serviceIcon, size: 42),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      service.name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    Text(
-                      service.type,
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
+                Text('Hosts:', style: Theme.of(context).textTheme.labelLarge),
+                ...hostAddresses.map((address) => _CopyableInfoCard(value: address))
               ],
             ),
-            const SizedBox(height: 8),
-            Flex(
-              direction: Axis.horizontal,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              spacing: 12.0,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('HOSTNAME', style: Theme.of(context).textTheme.labelMedium),
-                    Text(service.hostname ?? 'Unknown', style: Theme.of(context).textTheme.titleSmall),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('PORT', style: Theme.of(context).textTheme.labelMedium),
-                    Text(service.port.toString(), style: Theme.of(context).textTheme.titleSmall),
-                  ],
-                ),
-              ],
-            ),
-            _ServiceInformationRow(title: 'HOSTS', value: hostAddresses),
             if (service.attributes.isNotEmpty) ...[
               ExpansionTile(
                 expandedAlignment: Alignment.topLeft,
                 expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                title: Text("(${service.attributes.length}) Attributes", style: Theme.of(context).textTheme.bodyMedium),
+                title: Row(
+                  spacing: 6,
+                  children: [
+                    Icon(Icons.info_outline, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    Text("${service.attributes.length} Attributes", style: Theme.of(context).textTheme.bodyMedium),
+                  ],
+                ),
                 children: [
                   ...service.attributes.entries.map((entry) {
-                    return _ServiceInformationRow(title: entry.key, value: entry.value);
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 6),
+                      child: _CopyableInfoCard(title: entry.key, value: entry.value),
+                    );
                   }),
                 ],
               ),
@@ -178,14 +231,14 @@ class ResolvedServiceRow extends StatelessWidget {
   }
 }
 
-class _ServiceInformationRow extends StatelessWidget {
-  const _ServiceInformationRow({
-    required this.title,
+class _CopyableInfoCard extends StatelessWidget {
+  const _CopyableInfoCard({
     required this.value,
+    this.title,
   });
 
-  final String title;
   final String value;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +246,7 @@ class _ServiceInformationRow extends StatelessWidget {
       message: "Click to copy the value",
       waitDuration: Duration(milliseconds: 500),
       child: Card(
+        margin: EdgeInsets.zero,
         color: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         child: InkWell(
@@ -200,13 +254,13 @@ class _ServiceInformationRow extends StatelessWidget {
           onTap: () {
             Clipboard.setData(ClipboardData(text: value));
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$title copied to clipboard')),
+              SnackBar(content: Text('Value copied to clipboard')),
             );
           },
           child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
               child: Wrap(children: [
-                Text('$title: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                if (title != null) Text('$title: ', style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text(value),
               ])),
         ),
