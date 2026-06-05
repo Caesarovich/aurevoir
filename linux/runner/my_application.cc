@@ -1,8 +1,9 @@
 #include "my_application.h"
 
 #include <flutter_linux/flutter_linux.h>
+
 #ifdef GDK_WINDOWING_X11
-#include <gdk/gdkx.h>
+# include <gdk/gdkx.h>
 #endif
 
 #include "flutter/generated_plugin_registrant.h"
@@ -25,14 +26,24 @@ static void my_application_activate(GApplication* application) {
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
+  gtk_window_set_title(window, "aurevoir");
+
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
   // desktop).
   // If running on X and not using GNOME then just use a traditional title bar
   // in case the window manager does more exotic layout, e.g. tiling.
-  // If running on Wayland assume the header bar will work (may need changing
-  // if future cases occur).
   gboolean use_header_bar = TRUE;
+
+  GdkDisplay* display = gtk_widget_get_display(GTK_WIDGET(window));
+  if (display != nullptr) {
+    const gchar* backend_name = gdk_display_get_name(display);
+    if (backend_name != nullptr && g_str_has_prefix(backend_name, "wayland")) {
+    use_header_bar = FALSE;
+    gtk_window_set_decorated(window, FALSE);
+    }
+  }
+
 #ifdef GDK_WINDOWING_X11
   GdkScreen* screen = gtk_window_get_screen(window);
   if (GDK_IS_X11_SCREEN(screen)) {
@@ -48,8 +59,6 @@ static void my_application_activate(GApplication* application) {
     gtk_header_bar_set_title(header_bar, "aurevoir");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
-  } else {
-    gtk_window_set_title(window, "aurevoir");
   }
 
   gtk_window_set_default_size(window, 1280, 720);
