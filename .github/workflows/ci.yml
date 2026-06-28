@@ -7,31 +7,49 @@ on:
   workflow_dispatch:
 
 jobs:
-  nix-build:
+  verify-format:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: cachix/install-nix-action@v31
-      - uses: cachix/cachix-action@v16
-        with:
-          name: devenv
-      - name: Install devenv.sh
-        run: nix profile add nixpkgs#devenv
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
+      - name: Install dart format
+        uses: dart-lang/setup-dart@v1
         with:
-          tool-cache: true
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
+          sdk: stable
 
-      - name: Check pubspec.lock.json has not changed
-        shell: devenv shell bash -- -e {0}
+      - name: Verify code formatting
+        run: dart format --set-exit-if-changed .
+
+  verify-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dart analyze
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Verify code analysis
+        run: dart analyze
+
+  verify-lockfile-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        uses: dcarbone/install-yq-action@v1
+        with:
+          version: v4.44.3
+
+      - name: Verify pubspec.lock.json is up to date
         run: |
-          aurevoir-app:generate:pubspec-lock-json
+          yq . pubspec.lock > pubspec.lock.json
           git diff --exit-code -- pubspec.lock.json
