@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:collection/collection.dart';
 import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
@@ -17,23 +15,25 @@ class ServiceTypeProvider extends ChangeNotifier {
   final Set<String> _serviceTypes = {};
 
   /// The available service types.
-  UnmodifiableSetView<String> get serviceTypes =>
-      UnmodifiableSetView({..._serviceTypes, ..._userDefinedServiceTypes});
+  UnmodifiableSetView<String> get serviceTypes => UnmodifiableSetView({..._serviceTypes, ..._userDefinedServiceTypes});
 
   /// This is called when the user settings change.
   void updateUserDefinedServiceTypes(List<String> serviceTypes) {
     // This is to prevent notifying the listeners if the service types are the same.
-    if (SetEquality().equals(_userDefinedServiceTypes, serviceTypes.toSet()))
-      return;
+    if (SetEquality().equals(_userDefinedServiceTypes, serviceTypes.toSet())) return;
 
     _userDefinedServiceTypes = serviceTypes.toSet();
     notifyListeners();
   }
 
+  static const _protocolTypes = ['_tcp', '_udp'];
+
   // This is needed because the wildcard service discovery returns the service in a different format.
-  String _convertServiceType(BonsoirService service) {
-    print('Converting service type: $service');
-    return '${service.name}.${service.type.split('.').last}';
+  Set<String> _convertServiceType(BonsoirService service) {
+    String type = service.name;
+
+    // If the service type does not end with a protocol, we add both protocols.
+    return _protocolTypes.map((protocol) => '$type.$protocol').toSet();
   }
 
   /// Start the service type discovery.
@@ -57,12 +57,12 @@ class ServiceTypeProvider extends ChangeNotifier {
         print('🔦 Service type discovery stopped');
       } else if (event is BonsoirDiscoveryServiceFoundEvent) {
         print('🔦 Service type found: ${event.service}');
-        String serviceType = _convertServiceType(event.service);
-        _serviceTypes.add(serviceType);
+        Set<String> serviceTypes = _convertServiceType(event.service);
+        _serviceTypes.addAll(serviceTypes);
       } else if (event is BonsoirDiscoveryServiceLostEvent) {
         print('🔦 Service type lost: ${event.service}');
-        String serviceType = _convertServiceType(event.service);
-        _serviceTypes.remove(serviceType);
+        Set<String> serviceTypes = _convertServiceType(event.service);
+        _serviceTypes.removeAll(serviceTypes);
       } else if (event is BonsoirDiscoveryServiceUpdatedEvent) {
         print('🔦 Service type updated: ${event.service}');
       } else if (event is BonsoirDiscoveryServiceResolvedEvent) {
@@ -110,12 +110,10 @@ class ServiceProvider extends ChangeNotifier {
   final List<BonsoirService> _resolvedServices = [];
 
   /// The available services.
-  UnmodifiableListView<BonsoirService> get services =>
-      UnmodifiableListView(_services);
+  UnmodifiableListView<BonsoirService> get services => UnmodifiableListView(_services);
 
   /// The resolved services.
-  UnmodifiableListView<BonsoirService> get resolvedServices =>
-      UnmodifiableListView(_resolvedServices);
+  UnmodifiableListView<BonsoirService> get resolvedServices => UnmodifiableListView(_resolvedServices);
 
   void updateServiceTypes(Set<String> serviceTypes) {
     print('🔦 Updating service types: $serviceTypes');
@@ -195,8 +193,7 @@ class ServiceProvider extends ChangeNotifier {
     _services.add(service);
     notifyListeners();
 
-    if (_shouldResolveServices)
-      service.resolve(_discoveries[service.type]!.serviceResolver);
+    if (_shouldResolveServices) service.resolve(_discoveries[service.type]!.serviceResolver);
   }
 
   void _onServiceResolved(BonsoirService service) {
@@ -209,8 +206,7 @@ class ServiceProvider extends ChangeNotifier {
   void _onServiceLost(BonsoirService service) {
     print('🔍 Service lost : ${service.toJson()}');
     _services.remove(service);
-    _resolvedServices
-        .removeWhere((resolvedService) => resolvedService.name == service.name);
+    _resolvedServices.removeWhere((resolvedService) => resolvedService.name == service.name);
     notifyListeners();
   }
 
