@@ -1,8 +1,5 @@
 { pkgs, config, ... }:
 
-let
-  sdk = config.android.androidSdk;
-in
 {
   android = {
     enable = true;
@@ -15,6 +12,10 @@ in
 
   languages.dart.enable = true;
 
+  packages = with pkgs; [
+    yq
+  ];
+
   tasks = {
     "aurevoir-app:doctor" = {
       description = "Run Flutter doctor";
@@ -23,6 +24,14 @@ in
     "aurevoir-app:clean" = {
       description = "Clean the build artifacts";
       exec = "flutter clean";
+    };
+    "aurevoir-app:generate:pubspec-lock-json" = {
+      description = "Generate pubspec.lock.json file";
+      exec = "yq . pubspec.lock > pubspec.lock.json";
+    };
+    "aurevoir-app:generate:icons" = {
+      description = "Generate launcher icons for the app";
+      exec = "dart run flutter_launcher_icons";
     };
     "aurevoir-app:install-dependencies" = {
       description = "Install Flutter dependencies";
