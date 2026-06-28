@@ -10,22 +10,16 @@ class DeleteAllConfirmationDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Delete All Broadcasts'),
-      content: const Text(
-          'Are you sure you want to stop all broadcasts? This action cannot be undone.'),
+      content: const Text('Are you sure you want to stop all broadcasts? This action cannot be undone.'),
       actions: <Widget>[
-        TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop()),
+        TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(context).pop()),
         TextButton(
           child: const Text('Delete'),
           onPressed: () {
-            final broadcastProvider = Provider.of<BroadcastedServicesProvider>(
-                context,
-                listen: false);
-            final settingsProvider =
-                Provider.of<SettingsProvider>(context, listen: false);
+            final broadcastProvider = Provider.of<BroadcastedServicesProvider>(context, listen: false);
+            final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
 
-            broadcastProvider.stopAllBroadcasts();
+            broadcastProvider.removeAllBroadcasts();
 
             settingsProvider.setPersistedBroadcasts([]);
 
