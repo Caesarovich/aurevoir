@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  nix-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: cachix/install-nix-action@v31
+      - uses: cachix/cachix-action@v16
+        with:
+          name: devenv
+      - name: Install devenv.sh
+        run: nix profile add nixpkgs#devenv
+
+      - name: Check pubspec.lock.json has not changed
+        shell: devenv shell bash -- -e {0}
+        run: |
+          aurevoir-app:generate:pubspec-lock-json
+          git diff --exit-code -- pubspec.lock.json
