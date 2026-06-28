@@ -25,6 +25,14 @@
       description = "Clean the build artifacts";
       exec = "flutter clean";
     };
+    "aurevoir-app:format" = {
+      description = "Format the Dart code";
+      exec = "dart format .";
+    };
+    "aurevoir-app:analyze" = {
+      description = "Analyze the Dart code";
+      exec = "flutter analyze .";
+    };
     "aurevoir-app:generate:pubspec-lock-json" = {
       description = "Generate pubspec.lock.json file";
       exec = "yq . pubspec.lock > pubspec.lock.json";

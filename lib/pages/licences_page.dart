@@ -29,7 +29,8 @@ class LicencesPage extends StatelessWidget {
                     context,
                     CupertinoPageRoute(
                       builder: (_) => LicenceDetailPage(
-                        title: allDependencies[index].name[0].toUpperCase() + allDependencies[index].name.substring(1),
+                        title: allDependencies[index].name[0].toUpperCase() +
+                            allDependencies[index].name.substring(1),
                         licence: allDependencies[index].license!,
                       ),
                     ),
@@ -37,7 +38,8 @@ class LicencesPage extends StatelessWidget {
                 },
                 //capitalize the first letter of the string
                 title: Text(
-                  allDependencies[index].name[0].toUpperCase() + allDependencies[index].name.substring(1),
+                  allDependencies[index].name[0].toUpperCase() +
+                      allDependencies[index].name.substring(1),
                 ),
                 subtitle: Text(allDependencies[index].description),
               ),
@@ -52,7 +54,8 @@ class LicencesPage extends StatelessWidget {
 //detail page for the licence
 class LicenceDetailPage extends StatelessWidget {
   final String title, licence;
-  const LicenceDetailPage({super.key, required this.title, required this.licence});
+  const LicenceDetailPage(
+      {super.key, required this.title, required this.licence});
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,9 @@ class LicenceDetailPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           padding: const EdgeInsets.all(5),
-          decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(8)),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(

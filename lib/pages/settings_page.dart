@@ -54,7 +54,8 @@ class SettingsCategoryCard extends StatelessWidget {
   final String title;
   final List<Widget> children;
 
-  const SettingsCategoryCard({super.key, required this.title, required this.children});
+  const SettingsCategoryCard(
+      {super.key, required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +116,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           Text('Resolve services'),
                           SizedBox(width: 8),
                           Tooltip(
-                            message: 'Changing this setting might require a restart to take effect',
+                            message:
+                                'Changing this setting might require a restart to take effect',
                             child: Icon(Icons.info_outline, size: 16),
                           ),
                         ],
@@ -147,8 +149,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             padding: const EdgeInsets.only(top: 8.0),
                             child: ElevatedButton(
                               onPressed: () async {
-                                String? newService = await _showAddServiceDialog(context);
-                                if (newService != null && newService.isNotEmpty) {
+                                String? newService =
+                                    await _showAddServiceDialog(context);
+                                if (newService != null &&
+                                    newService.isNotEmpty) {
                                   final services = settings.mdnsServices;
                                   services.add(newService);
                                   settings.setMdnsServices(services);
@@ -172,20 +176,26 @@ class _SettingsPageState extends State<SettingsPage> {
                           Text('Persist broadcasts'),
                           SizedBox(width: 8),
                           Tooltip(
-                            message: 'When enabled, broadcasts will be persisted across app restarts',
+                            message:
+                                'When enabled, broadcasts will be persisted across app restarts',
                             child: Icon(Icons.info_outline, size: 16),
                           ),
                         ],
                       ),
                       value: settings.persistBroadcasts,
                       onChanged: (value) {
-                        final broadcastProvider = Provider.of<BroadcastedServicesProvider>(context, listen: false);
+                        final broadcastProvider =
+                            Provider.of<BroadcastedServicesProvider>(context,
+                                listen: false);
 
                         settings.togglePersistBroadcasts();
 
                         value
-                            ? settings.setPersistedBroadcasts(
-                                broadcastProvider.broadcasts.map((broadcast) => jsonEncode(broadcast.service.toJson())).toList())
+                            ? settings.setPersistedBroadcasts(broadcastProvider
+                                .broadcasts
+                                .map((broadcast) =>
+                                    jsonEncode(broadcast.service.toJson()))
+                                .toList())
                             : settings.setPersistedBroadcasts([]);
                       },
                     ),
@@ -196,7 +206,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     ElevatedButton(
                         onPressed: () async {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPage()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => const AboutPage()));
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -209,7 +220,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                         onPressed: () async {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LicencesPage()));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => const LicencesPage()));
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,

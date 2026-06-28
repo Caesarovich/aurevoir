@@ -161,27 +161,33 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
                       padding: const EdgeInsets.fromLTRB(32, 8, 32, 32),
                       child: Column(
                         children: [
-                          Text('Service Information', style: Theme.of(context).textTheme.labelLarge),
+                          Text('Service Information',
+                              style: Theme.of(context).textTheme.labelLarge),
                           TextFormField(
                             autofocus: true,
-                            decoration: const InputDecoration(labelText: 'Service name'),
+                            decoration: const InputDecoration(
+                                labelText: 'Service name'),
                             controller: _serviceNameController,
                             onFieldSubmitted: (_) => _handleSubmit(),
                             validator: _validateServiceName,
                           ),
                           const SizedBox(height: 16.0),
                           TextFormField(
-                            decoration: const InputDecoration(labelText: 'Service type'),
+                            decoration: const InputDecoration(
+                                labelText: 'Service type'),
                             controller: _serviceTypeController,
                             onFieldSubmitted: (_) => _handleSubmit(),
                             validator: validateServiceType,
                           ),
                           const SizedBox(height: 16.0),
                           TextFormField(
-                            decoration: const InputDecoration(labelText: 'Service port'),
+                            decoration: const InputDecoration(
+                                labelText: 'Service port'),
                             controller: _servicePortController,
                             keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             onFieldSubmitted: (_) => _handleSubmit(),
                             validator: _validatePort,
                           ),
@@ -195,18 +201,24 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
                     padding: const EdgeInsets.fromLTRB(32, 8, 32, 32),
                     child: Column(
                       children: [
-                        Text('Service Attributes', style: Theme.of(context).textTheme.bodyMedium),
+                        Text('Service Attributes',
+                            style: Theme.of(context).textTheme.bodyMedium),
                         const SizedBox(height: 8.0),
-                        ..._attributeKeyControllers.asMap().entries.map((entry) {
+                        ..._attributeKeyControllers
+                            .asMap()
+                            .entries
+                            .map((entry) {
                           int index = entry.key;
                           return Row(
                             children: [
                               Expanded(
                                 child: TextFormField(
-                                  decoration: const InputDecoration(labelText: 'Attribute Key'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Attribute Key'),
                                   controller: _attributeKeyControllers[index],
                                   maxLength: 9,
-                                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                                  maxLengthEnforcement:
+                                      MaxLengthEnforcement.enforced,
                                   validator: _validateAttributeKey,
                                   onChanged: (_) => setState(() {}),
                                 ),
@@ -214,10 +226,15 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
                               const SizedBox(width: 8.0),
                               Expanded(
                                 child: TextFormField(
-                                  decoration: const InputDecoration(labelText: 'Attribute Value'),
+                                  decoration: const InputDecoration(
+                                      labelText: 'Attribute Value'),
                                   controller: _attributeValueControllers[index],
-                                  maxLength: 254 - _attributeKeyControllers[index].text.length,
-                                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                                  maxLength: 254 -
+                                      _attributeKeyControllers[index]
+                                          .text
+                                          .length,
+                                  maxLengthEnforcement:
+                                      MaxLengthEnforcement.enforced,
                                   validator: _validateAttributeValue,
                                 ),
                               ),
@@ -241,14 +258,16 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
                             Expanded(
                               child: TextFormField(
                                 enabled: false,
-                                decoration: const InputDecoration(labelText: 'Attribute Key'),
+                                decoration: const InputDecoration(
+                                    labelText: 'Attribute Key'),
                               ),
                             ),
                             const SizedBox(width: 8.0),
                             Expanded(
                               child: TextFormField(
                                 enabled: false,
-                                decoration: const InputDecoration(labelText: 'Attribute Value'),
+                                decoration: const InputDecoration(
+                                    labelText: 'Attribute Value'),
                               ),
                             ),
                             IconButton(
@@ -296,7 +315,8 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
         name: _serviceNameController.text,
         type: _serviceTypeController.text,
         port: int.parse(_servicePortController.text),
-        attributes: _attributeKeyControllers.asMap().entries.fold<Map<String, String>>(
+        attributes:
+            _attributeKeyControllers.asMap().entries.fold<Map<String, String>>(
           {},
           (previousValue, entry) {
             int index = entry.key;
@@ -310,17 +330,22 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
         ),
       );
 
-      final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-      final broadcastProvider = Provider.of<BroadcastedServicesProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      final broadcastProvider =
+          Provider.of<BroadcastedServicesProvider>(context, listen: false);
 
       broadcastProvider.broadcastService(service).then(
         (value) {
           settingsProvider.setPersistedBroadcasts(
-            broadcastProvider.broadcasts.map((broadcast) => jsonEncode(broadcast.service.toJson())).toList(),
+            broadcastProvider.broadcasts
+                .map((broadcast) => jsonEncode(broadcast.service.toJson()))
+                .toList(),
           );
         },
       ).catchError((e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to broadcast service: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to broadcast service: $e')));
       });
 
       Navigator.of(context).pop();

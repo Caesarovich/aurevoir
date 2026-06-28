@@ -8,12 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void loadPersistedBroadcasts(SettingsProvider settingsProvider, BroadcastedServicesProvider broadcastedServicesProvider) {
+void loadPersistedBroadcasts(SettingsProvider settingsProvider,
+    BroadcastedServicesProvider broadcastedServicesProvider) {
   if (!settingsProvider.persistBroadcasts) {
     return;
   }
 
-  final persistedBroadcasts = settingsProvider.persistedBroadcasts.map((jsonString) => BonsoirService.fromJson(jsonDecode(jsonString))).toList();
+  final persistedBroadcasts = settingsProvider.persistedBroadcasts
+      .map((jsonString) => BonsoirService.fromJson(jsonDecode(jsonString)))
+      .toList();
 
   for (var broadcast in persistedBroadcasts) {
     broadcastedServicesProvider.broadcastService(broadcast);
@@ -23,7 +26,8 @@ void loadPersistedBroadcasts(SettingsProvider settingsProvider, BroadcastedServi
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final settingsProvider = SettingsProvider(prefs: await SharedPreferences.getInstance());
+  final settingsProvider =
+      SettingsProvider(prefs: await SharedPreferences.getInstance());
 
   final broadcastedServicesProvider = BroadcastedServicesProvider();
 
@@ -36,13 +40,18 @@ void main() async {
         ChangeNotifierProvider(create: (_) => broadcastedServicesProvider),
         ChangeNotifierProxyProvider<SettingsProvider, ServiceTypeProvider>(
           create: (_) => ServiceTypeProvider(),
-          update: (_, settingsProvider, serviceTypeProvider) => serviceTypeProvider!..updateUserDefinedServiceTypes(settingsProvider.mdnsServices),
+          update: (_, settingsProvider, serviceTypeProvider) =>
+              serviceTypeProvider!
+                ..updateUserDefinedServiceTypes(settingsProvider.mdnsServices),
         ),
-        ChangeNotifierProxyProvider2<SettingsProvider, ServiceTypeProvider, ServiceProvider>(
+        ChangeNotifierProxyProvider2<SettingsProvider, ServiceTypeProvider,
+                ServiceProvider>(
             create: (_) => ServiceProvider(),
-            update: (_, settingsProvider, serviceTypeProvider, serviceProvider) => serviceProvider!
-              ..setShouldResolveServices(settingsProvider.resolveServices)
-              ..updateServiceTypes(serviceTypeProvider.serviceTypes)),
+            update: (_, settingsProvider, serviceTypeProvider,
+                    serviceProvider) =>
+                serviceProvider!
+                  ..setShouldResolveServices(settingsProvider.resolveServices)
+                  ..updateServiceTypes(serviceTypeProvider.serviceTypes)),
       ],
       child: const MyApp(),
     ),
@@ -108,9 +117,12 @@ final ThemeData _lightTheme = ThemeData(
     ),
   ),
   switchTheme: SwitchThemeData(
-    thumbColor: WidgetStateProperty.resolveWith((states) => states.contains(WidgetState.selected) ? _lightPrimary : Colors.grey),
-    trackColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? _lightSecondary.withValues(alpha: 0.5) : Colors.grey.shade300),
+    thumbColor: WidgetStateProperty.resolveWith((states) =>
+        states.contains(WidgetState.selected) ? _lightPrimary : Colors.grey),
+    trackColor: WidgetStateProperty.resolveWith((states) =>
+        states.contains(WidgetState.selected)
+            ? _lightSecondary.withValues(alpha: 0.5)
+            : Colors.grey.shade300),
   ),
 );
 

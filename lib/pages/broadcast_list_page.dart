@@ -85,7 +85,8 @@ class BroadcastListPage extends StatelessWidget {
                 child: ListView.builder(
               itemCount: model.broadcasts.length,
               itemBuilder: (context, index) {
-                return BroadcastedServiceRow(broadcast: model.broadcasts[index]);
+                return BroadcastedServiceRow(
+                    broadcast: model.broadcasts[index]);
               },
             )),
           ),
@@ -117,7 +118,9 @@ class BroadcastedServiceRow extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(broadcast.service.name),
-        leading: broadcast.isReady ? const Icon(Icons.wifi) : const Icon(Icons.wifi_off),
+        leading: broadcast.isReady
+            ? const Icon(Icons.wifi)
+            : const Icon(Icons.wifi_off),
         subtitle: Text(
             '${broadcast.service.type} : ${broadcast.service.port.toString()}  (${broadcast.isReady ? 'Ready' : 'Not ready'}) (${broadcast.isStopped ? 'Stopped' : 'Running'})'),
         trailing: Row(
@@ -133,12 +136,18 @@ class BroadcastedServiceRow extends StatelessWidget {
                 icon: const Icon(Icons.play_arrow_outlined),
                 tooltip: 'Resume broadcast',
                 onPressed: () {
-                  final broadcastProvider = Provider.of<BroadcastedServicesProvider>(context, listen: false);
-                  final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                  final broadcastProvider =
+                      Provider.of<BroadcastedServicesProvider>(context,
+                          listen: false);
+                  final settingsProvider =
+                      Provider.of<SettingsProvider>(context, listen: false);
 
                   broadcastProvider.resumeBroadcast(broadcast).then(
                         (value) => settingsProvider.setPersistedBroadcasts(
-                          broadcastProvider.broadcasts.map((broadcast) => jsonEncode(broadcast.service.toJson())).toList(),
+                          broadcastProvider.broadcasts
+                              .map((broadcast) =>
+                                  jsonEncode(broadcast.service.toJson()))
+                              .toList(),
                         ),
                       );
                 },
@@ -148,12 +157,18 @@ class BroadcastedServiceRow extends StatelessWidget {
                 icon: const Icon(Icons.pause),
                 tooltip: 'Pause broadcast',
                 onPressed: () {
-                  final broadcastProvider = Provider.of<BroadcastedServicesProvider>(context, listen: false);
-                  final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                  final broadcastProvider =
+                      Provider.of<BroadcastedServicesProvider>(context,
+                          listen: false);
+                  final settingsProvider =
+                      Provider.of<SettingsProvider>(context, listen: false);
 
                   broadcastProvider.stopBroadcast(broadcast).then(
                         (value) => settingsProvider.setPersistedBroadcasts(
-                          broadcastProvider.broadcasts.map((broadcast) => jsonEncode(broadcast.service.toJson())).toList(),
+                          broadcastProvider.broadcasts
+                              .map((broadcast) =>
+                                  jsonEncode(broadcast.service.toJson()))
+                              .toList(),
                         ),
                       );
                 },
@@ -162,12 +177,18 @@ class BroadcastedServiceRow extends StatelessWidget {
               icon: const Icon(Icons.delete_outlined),
               tooltip: 'Delete broadcast ${broadcast.service.name}',
               onPressed: () {
-                final broadcastProvider = Provider.of<BroadcastedServicesProvider>(context, listen: false);
-                final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+                final broadcastProvider =
+                    Provider.of<BroadcastedServicesProvider>(context,
+                        listen: false);
+                final settingsProvider =
+                    Provider.of<SettingsProvider>(context, listen: false);
 
                 broadcastProvider.removeBroadcast(broadcast).then(
                       (value) => settingsProvider.setPersistedBroadcasts(
-                        broadcastProvider.broadcasts.map((broadcast) => jsonEncode(broadcast.service.toJson())).toList(),
+                        broadcastProvider.broadcasts
+                            .map((broadcast) =>
+                                jsonEncode(broadcast.service.toJson()))
+                            .toList(),
                       ),
                     );
               },

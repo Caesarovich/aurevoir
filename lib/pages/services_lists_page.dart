@@ -41,7 +41,10 @@ class _ServiceListPageState extends State<ServiceListPage> {
     final String port = service.port.toString().toLowerCase();
     final String hostname = (service.hostname ?? '').toString().toLowerCase();
 
-    return name.contains(_searchQuery) || type.contains(_searchQuery) || port.contains(_searchQuery) || hostname.contains(_searchQuery);
+    return name.contains(_searchQuery) ||
+        type.contains(_searchQuery) ||
+        port.contains(_searchQuery) ||
+        hostname.contains(_searchQuery);
   }
 
   ServiceListType _currentListType = ServiceListType.resolved;
@@ -54,10 +57,14 @@ class _ServiceListPageState extends State<ServiceListPage> {
 
     sortedServices.sort((a, b) {
       final result = switch (_currentSortOption) {
-        ServiceSortOption.name => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-        ServiceSortOption.type => a.type.toLowerCase().compareTo(b.type.toLowerCase()),
+        ServiceSortOption.name =>
+          a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        ServiceSortOption.type =>
+          a.type.toLowerCase().compareTo(b.type.toLowerCase()),
         ServiceSortOption.port => a.port.compareTo(b.port),
-        ServiceSortOption.hostname => (a.hostname ?? '').toLowerCase().compareTo((b.hostname ?? '').toLowerCase()),
+        ServiceSortOption.hostname => (a.hostname ?? '')
+            .toLowerCase()
+            .compareTo((b.hostname ?? '').toLowerCase()),
       };
 
       return _currentSortOrder == SortOrderOption.ascending ? result : -result;
@@ -133,7 +140,8 @@ class _ServiceListPageState extends State<ServiceListPage> {
                   ),
                   filled: true,
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
               ),
               actions: [
@@ -149,10 +157,15 @@ class _ServiceListPageState extends State<ServiceListPage> {
                   tooltip: 'Toggle sort order',
                   onPressed: () {
                     setState(() {
-                      _currentSortOrder = _currentSortOrder == SortOrderOption.ascending ? SortOrderOption.descending : SortOrderOption.ascending;
+                      _currentSortOrder =
+                          _currentSortOrder == SortOrderOption.ascending
+                              ? SortOrderOption.descending
+                              : SortOrderOption.ascending;
                     });
                   },
-                  icon: Icon(_currentSortOrder == SortOrderOption.ascending ? Icons.arrow_upward : Icons.arrow_downward),
+                  icon: Icon(_currentSortOrder == SortOrderOption.ascending
+                      ? Icons.arrow_upward
+                      : Icons.arrow_downward),
                 ),
                 _ServiceListTypePopupMenu(
                   currentType: _currentListType,
@@ -178,7 +191,8 @@ class _ServiceListTypePopupMenu extends StatelessWidget {
   final ServiceListType currentType;
   final ValueChanged<ServiceListType> onSelected;
 
-  const _ServiceListTypePopupMenu({required this.currentType, required this.onSelected});
+  const _ServiceListTypePopupMenu(
+      {required this.currentType, required this.onSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +218,8 @@ class _ServiceSortPopupMenu extends StatelessWidget {
   final ServiceSortOption currentOption;
   final ValueChanged<ServiceSortOption> onSelected;
 
-  const _ServiceSortPopupMenu({required this.currentOption, required this.onSelected});
+  const _ServiceSortPopupMenu(
+      {required this.currentOption, required this.onSelected});
 
   PopupMenuItem<ServiceSortOption> _buildSortItem(
     BuildContext context,

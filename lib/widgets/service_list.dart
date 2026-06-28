@@ -132,7 +132,9 @@ class ResolvedServiceRow extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Center(
-                        child: Icon(serviceIcon, color: Theme.of(context).colorScheme.onPrimary, size: 36),
+                        child: Icon(serviceIcon,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                            size: 36),
                       ),
                     ),
                   ),
@@ -160,7 +162,13 @@ class ResolvedServiceRow extends StatelessWidget {
                                 service.type,
                                 maxLines: 1,
                                 softWrap: false,
-                                style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurfaceVariant),
                               ),
                             ],
                           ),
@@ -180,8 +188,15 @@ class ResolvedServiceRow extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text('PORT',
-                              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                          Text(service.port.toString(), style: Theme.of(context).textTheme.titleSmall),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant)),
+                          Text(service.port.toString(),
+                              style: Theme.of(context).textTheme.titleSmall),
                         ],
                       ),
                     ),
@@ -196,7 +211,8 @@ class ResolvedServiceRow extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text('Hosts:', style: Theme.of(context).textTheme.labelLarge),
-                ...hostAddresses.map((address) => _CopyableInfoCard(value: address))
+                ...hostAddresses
+                    .map((address) => _CopyableInfoCard(value: address))
               ],
             ),
             if (service.attributes.isNotEmpty) ...[
@@ -206,15 +222,19 @@ class ResolvedServiceRow extends StatelessWidget {
                 title: Row(
                   spacing: 6,
                   children: [
-                    Icon(Icons.info_outline, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    Text("${service.attributes.length} Attributes", style: Theme.of(context).textTheme.bodyMedium),
+                    Icon(Icons.info_outline,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    Text("${service.attributes.length} Attributes",
+                        style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
                 children: [
                   ...service.attributes.entries.map((entry) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 4, bottom: 6),
-                      child: _CopyableInfoCard(title: entry.key, value: entry.value),
+                      child: _CopyableInfoCard(
+                          title: entry.key, value: entry.value),
                     );
                   }),
                 ],
@@ -254,9 +274,12 @@ class _CopyableInfoCard extends StatelessWidget {
             );
           },
           child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
               child: Wrap(children: [
-                if (title != null) Text('$title: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                if (title != null)
+                  Text('$title: ',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text(value),
               ])),
         ),

@@ -59,7 +59,8 @@ class ServiceInformationModal extends StatelessWidget {
           ]),
           if (service.attributes.isNotEmpty) ...[
             const SizedBox(height: 16),
-            const Text('Attributes:', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('Attributes:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             Table(
               children: service.attributes.entries.map((entry) {
@@ -80,7 +81,9 @@ class ServiceInformationModal extends StatelessWidget {
         ],
       ),
       actions: <Widget>[
-        TextButton(child: const Text('Close'), onPressed: () => Navigator.of(context).pop()),
+        TextButton(
+            child: const Text('Close'),
+            onPressed: () => Navigator.of(context).pop()),
       ],
     );
   }

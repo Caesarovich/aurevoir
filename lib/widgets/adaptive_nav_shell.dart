@@ -23,7 +23,8 @@ class _AdaptiveNavShellState extends State<AdaptiveNavShell> {
 
   @override
   Widget build(BuildContext context) {
-    assert(widget.destinations.length == widget.pages.length, 'Destinations and pages must have the same length');
+    assert(widget.destinations.length == widget.pages.length,
+        'Destinations and pages must have the same length');
 
     final isWide = widget.width >= widget.breakpoint;
 

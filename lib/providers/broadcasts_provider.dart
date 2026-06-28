@@ -9,7 +9,8 @@ class BroadcastedServicesProvider extends ChangeNotifier {
   final Set<BonsoirBroadcast> _broadcasts = <BonsoirBroadcast>{};
 
   /// The active services.
-  UnmodifiableListView<BonsoirBroadcast> get broadcasts => UnmodifiableListView(_broadcasts.sortedBy((broadcast) => broadcast.service.name));
+  UnmodifiableListView<BonsoirBroadcast> get broadcasts => UnmodifiableListView(
+      _broadcasts.sortedBy((broadcast) => broadcast.service.name));
 
   Future<void> resumeBroadcast(BonsoirBroadcast broadcast) async {
     if (broadcast.isReady) return;
@@ -64,13 +65,16 @@ class BroadcastedServicesProvider extends ChangeNotifier {
         print('📡 Broadcast stopped for service: ${service.toJson()}');
         notifyListeners();
       } else if (event is BonsoirBroadcastNameAlreadyExistsEvent) {
-        print('📡 Broadcast name already exists for service: ${service.toJson()}');
+        print(
+            '📡 Broadcast name already exists for service: ${service.toJson()}');
         _broadcasts.remove(broadcast);
         notifyListeners();
       } else if (event is BonsoirBroadcastUnknownEvent) {
-        print('📡 Broadcast unknown event for service: ${service.toJson()} - $event');
+        print(
+            '📡 Broadcast unknown event for service: ${service.toJson()} - $event');
       } else {
-        print('📡 Broadcast unhandled event for service: ${service.toJson()} - $event');
+        print(
+            '📡 Broadcast unhandled event for service: ${service.toJson()} - $event');
       }
     }, onError: (error) {
       print('📡 Broadcast error for service: ${service.toJson()} - $error');
