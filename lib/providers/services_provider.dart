@@ -15,12 +15,14 @@ class ServiceTypeProvider extends ChangeNotifier {
   final Set<String> _serviceTypes = {};
 
   /// The available service types.
-  UnmodifiableSetView<String> get serviceTypes => UnmodifiableSetView({..._serviceTypes, ..._userDefinedServiceTypes});
+  UnmodifiableSetView<String> get serviceTypes =>
+      UnmodifiableSetView({..._serviceTypes, ..._userDefinedServiceTypes});
 
   /// This is called when the user settings change.
   void updateUserDefinedServiceTypes(List<String> serviceTypes) {
     // This is to prevent notifying the listeners if the service types are the same.
-    if (SetEquality().equals(_userDefinedServiceTypes, serviceTypes.toSet())) return;
+    if (SetEquality().equals(_userDefinedServiceTypes, serviceTypes.toSet()))
+      return;
 
     _userDefinedServiceTypes = serviceTypes.toSet();
     notifyListeners();
@@ -110,10 +112,12 @@ class ServiceProvider extends ChangeNotifier {
   final List<BonsoirService> _resolvedServices = [];
 
   /// The available services.
-  UnmodifiableListView<BonsoirService> get services => UnmodifiableListView(_services);
+  UnmodifiableListView<BonsoirService> get services =>
+      UnmodifiableListView(_services);
 
   /// The resolved services.
-  UnmodifiableListView<BonsoirService> get resolvedServices => UnmodifiableListView(_resolvedServices);
+  UnmodifiableListView<BonsoirService> get resolvedServices =>
+      UnmodifiableListView(_resolvedServices);
 
   void updateServiceTypes(Set<String> serviceTypes) {
     print('🔦 Updating service types: $serviceTypes');
@@ -193,7 +197,8 @@ class ServiceProvider extends ChangeNotifier {
     _services.add(service);
     notifyListeners();
 
-    if (_shouldResolveServices) service.resolve(_discoveries[service.type]!.serviceResolver);
+    if (_shouldResolveServices)
+      service.resolve(_discoveries[service.type]!.serviceResolver);
   }
 
   void _onServiceResolved(BonsoirService service) {
@@ -206,7 +211,8 @@ class ServiceProvider extends ChangeNotifier {
   void _onServiceLost(BonsoirService service) {
     print('🔍 Service lost : ${service.toJson()}');
     _services.remove(service);
-    _resolvedServices.removeWhere((resolvedService) => resolvedService.name == service.name);
+    _resolvedServices
+        .removeWhere((resolvedService) => resolvedService.name == service.name);
     notifyListeners();
   }
 
