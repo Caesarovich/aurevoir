@@ -1,4 +1,3 @@
-import 'package:aurevoir/widgets/text_divider.dart';
 import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

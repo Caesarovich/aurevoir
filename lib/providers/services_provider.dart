@@ -197,8 +197,9 @@ class ServiceProvider extends ChangeNotifier {
     _services.add(service);
     notifyListeners();
 
-    if (_shouldResolveServices)
+    if (_shouldResolveServices) {
       service.resolve(_discoveries[service.type]!.serviceResolver);
+    }
   }
 
   void _onServiceResolved(BonsoirService service) {
