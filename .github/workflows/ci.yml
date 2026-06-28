@@ -14,10 +14,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dart format
-        uses: dart-lang/setup-dart@v1
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
         with:
-          sdk: stable
+          channel: stable
+          version: 3.41.6
 
       - name: Verify code formatting
         run: dart format --set-exit-if-changed .
@@ -29,10 +30,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dart analyze
-        uses: dart-lang/setup-dart@v1
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
         with:
-          sdk: stable
+          channel: stable
+          version: 3.41.6
 
       - name: Verify code analysis
         run: dart analyze
