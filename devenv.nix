@@ -41,6 +41,10 @@
       description = "Generate launcher icons for the app";
       exec = "dart run flutter_launcher_icons";
     };
+    "aurevoir-app:generate:licenses" = {
+      description = "Generate licenses for the app";
+      exec = "dart run dart_pubspec_licenses:generate";
+    };
     "aurevoir-app:install-dependencies" = {
       description = "Install Flutter dependencies";
       exec = "flutter pub get";
