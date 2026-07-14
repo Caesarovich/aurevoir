@@ -1,4 +1,5 @@
-# aurevoir
+# Aurevoir
+<img width="1024" height="512" alt="AurevoirBanner" src="https://github.com/user-attachments/assets/eabd59c7-64ab-4165-ad4e-30e06889894a" />
 
 A new Flutter project.
 
