@@ -61,3 +61,25 @@ jobs:
         run: |
           yq -o=json . pubspec.lock > pubspec.lock.json
           git diff --exit-code -- pubspec.lock.json
+
+  verify-oss-licenses:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+        with:
+          channel: stable
+          version: 3.41.6
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate OSS licenses
+        run: dart run dart_pubspec_licenses:generate
+
+      - name: Verify OSS licenses are up to date
+        run: git diff --exit-code -- oss_licenses.json
