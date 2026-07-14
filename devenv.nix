@@ -43,7 +43,7 @@
     };
     "aurevoir-app:generate:licenses" = {
       description = "Generate licenses for the app";
-      exec = "dart run dart_pubspec_licenses:generate";
+      exec = "dart run dart_pubspec_licenses:generate && dart format .";
     };
     "aurevoir-app:install-dependencies" = {
       description = "Install Flutter dependencies";
