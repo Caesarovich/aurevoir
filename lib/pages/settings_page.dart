@@ -4,9 +4,9 @@ import 'package:aurevoir/pages/about_page.dart';
 import 'package:aurevoir/pages/broadcast_create_page.dart';
 import 'package:aurevoir/pages/licences_page.dart';
 import 'package:aurevoir/providers/broadcasts_provider.dart';
+import 'package:aurevoir/providers/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:aurevoir/providers/settings_provider.dart';
 
 Future<String?> _showAddServiceDialog(BuildContext context) async {
   final formKey = GlobalKey<FormState>();
@@ -15,7 +15,7 @@ Future<String?> _showAddServiceDialog(BuildContext context) async {
 
   return showDialog<String>(
     context: context,
-    builder: (BuildContext context) {
+    builder: (context) {
       return AlertDialog(
         title: const Text('Add a service type'),
         content: Form(
@@ -50,12 +50,21 @@ Future<String?> _showAddServiceDialog(BuildContext context) async {
   );
 }
 
+/// Card widget that displays a category of settings
+/// with a title and a list of children widgets.
 class SettingsCategoryCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
+  /// Constructor for the SettingsCategoryCard.
+  const SettingsCategoryCard({
+    required this.title,
+    required this.children,
+    super.key,
+  });
 
-  const SettingsCategoryCard(
-      {super.key, required this.title, required this.children});
+  /// The title of the settings category.
+  final String title;
+
+  /// The list of children widgets that represent the settings in this category.
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +73,7 @@ class SettingsCategoryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Text(
               title,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
@@ -77,7 +86,9 @@ class SettingsCategoryCard extends StatelessWidget {
   }
 }
 
+/// The settings page of the application.
 class SettingsPage extends StatefulWidget {
+  /// Constructor for the SettingsPage.
   const SettingsPage({super.key});
 
   @override
@@ -89,125 +100,27 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(child: Consumer<SettingsProvider>(
-          builder: (context, settings, child) {
-            return ListView(
-              children: [
-                SettingsCategoryCard(
-                  title: 'Appearance',
-                  children: [
-                    SwitchListTile(
-                      title: const Text('Dark Mode'),
-                      value: settings.darkMode,
-                      onChanged: (value) {
-                        settings.toggleDarkMode();
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                SettingsCategoryCard(
-                  title: "Service discovery",
-                  children: [
-                    SwitchListTile(
-                      title: const Row(
-                        children: [
-                          Text('Resolve services'),
-                          SizedBox(width: 8),
-                          Tooltip(
-                            message:
-                                'Changing this setting might require a restart to take effect',
-                            child: Icon(Icons.info_outline, size: 16),
-                          ),
-                        ],
-                      ),
-                      value: settings.resolveServices,
-                      onChanged: (value) {
-                        settings.toggleServiceResolution();
-                      },
-                    ),
-                    ListTile(
-                      title: const Text('mDNS Services'),
-                      subtitle: Column(
-                        children: [
-                          Column(
-                              children: settings.mdnsServices.map((service) {
-                            return ListTile(
-                              title: Text(service),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () {
-                                  final services = settings.mdnsServices;
-                                  services.remove(service);
-                                  settings.setMdnsServices(services);
-                                },
-                              ),
-                            );
-                          }).toList()),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                String? newService =
-                                    await _showAddServiceDialog(context);
-                                if (newService != null &&
-                                    newService.isNotEmpty) {
-                                  final services = settings.mdnsServices;
-                                  services.add(newService);
-                                  settings.setMdnsServices(services);
-                                }
-                              },
-                              child: const Text('Add Service'),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                SettingsCategoryCard(
-                  title: 'Broadcasting',
-                  children: [
-                    SwitchListTile(
-                      title: const Row(
-                        children: [
-                          Text('Persist broadcasts'),
-                          SizedBox(width: 8),
-                          Tooltip(
-                            message:
-                                'When enabled, broadcasts will be persisted across app restarts',
-                            child: Icon(Icons.info_outline, size: 16),
-                          ),
-                        ],
-                      ),
-                      value: settings.persistBroadcasts,
-                      onChanged: (value) {
-                        final broadcastProvider =
-                            Provider.of<BroadcastedServicesProvider>(context,
-                                listen: false);
-
-                        settings.togglePersistBroadcasts();
-
-                        value
-                            ? settings.setPersistedBroadcasts(broadcastProvider
-                                .broadcasts
-                                .map((broadcast) =>
-                                    jsonEncode(broadcast.service.toJson()))
-                                .toList())
-                            : settings.setPersistedBroadcasts([]);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                Column(
-                  children: [
-                    ElevatedButton(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Consumer<SettingsProvider>(
+            builder: (context, settings, child) {
+              return ListView(
+                children: [
+                  _AppearanceSettings(settings: settings),
+                  const SizedBox(height: 16),
+                  _ServiceDiscoverySettings(settings: settings),
+                  const SizedBox(height: 16),
+                  _BroadcastingSettings(settings: settings),
+                  const SizedBox(height: 32),
+                  Column(
+                    children: [
+                      ElevatedButton(
                         onPressed: () async {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => const AboutPage()));
+                          await Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const AboutPage(),
+                            ),
+                          );
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -216,12 +129,16 @@ class _SettingsPageState extends State<SettingsPage> {
                             SizedBox(width: 8),
                             Text('About'),
                           ],
-                        )),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
                         onPressed: () async {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => const LicencesPage()));
+                          await Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const LicencesPage(),
+                            ),
+                          );
                         },
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
@@ -230,14 +147,168 @@ class _SettingsPageState extends State<SettingsPage> {
                             SizedBox(width: 8),
                             Text('Licences'),
                           ],
-                        )),
-                  ],
-                ),
-              ],
-            );
-          },
-        )),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class _AppearanceSettings extends StatelessWidget {
+  const _AppearanceSettings({
+    required this.settings,
+  });
+
+  final SettingsProvider settings;
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingsCategoryCard(
+      title: 'Appearance',
+      children: [
+        SwitchListTile(
+          title: const Text('Dark Mode'),
+          value: settings.darkMode,
+          onChanged: (value) async {
+            await settings.toggleDarkMode();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _ServiceDiscoverySettings extends StatelessWidget {
+  const _ServiceDiscoverySettings({
+    required this.settings,
+  });
+
+  final SettingsProvider settings;
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingsCategoryCard(
+      title: 'Service discovery',
+      children: [
+        SwitchListTile(
+          title: const Row(
+            children: [
+              Text('Resolve services'),
+              SizedBox(width: 8),
+              Tooltip(
+                message: '''
+                    Changing this setting might require
+                    a restart to take effect
+                    ''',
+                child: Icon(Icons.info_outline, size: 16),
+              ),
+            ],
+          ),
+          value: settings.resolveServices,
+          onChanged: (value) async {
+            await settings.toggleServiceResolution();
+          },
+        ),
+        ListTile(
+          title: const Text('mDNS Services'),
+          subtitle: Column(
+            children: [
+              Column(
+                children: settings.mdnsServices.map((service) {
+                  return ListTile(
+                    title: Text(service),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        final services = settings.mdnsServices..remove(service);
+                        await settings.setMdnsServices(services);
+                      },
+                    ),
+                  );
+                }).toList(),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final newService = await _showAddServiceDialog(context);
+                    if (newService != null && newService.isNotEmpty) {
+                      final services = settings.mdnsServices..add(newService);
+                      await settings.setMdnsServices(services);
+                    }
+                  },
+                  child: const Text('Add Service'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BroadcastingSettings extends StatelessWidget {
+  const _BroadcastingSettings({
+    required this.settings,
+  });
+
+  final SettingsProvider settings;
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingsCategoryCard(
+      title: 'Broadcasting',
+      children: [
+        SwitchListTile(
+          title: const Row(
+            children: [
+              Text('Persist broadcasts'),
+              SizedBox(width: 8),
+              Tooltip(
+                message: '''
+                    When enabled, broadcasts will be
+                    persisted across app restarts
+                ''',
+                child: Icon(Icons.info_outline, size: 16),
+              ),
+            ],
+          ),
+          value: settings.persistBroadcasts,
+          onChanged: (value) async {
+            final broadcastProvider = Provider.of<BroadcastedServicesProvider>(
+              context,
+              listen: false,
+            );
+
+            await settings.togglePersistBroadcasts();
+
+            // If the user enables persist broadcasts
+            // save the current broadcasts to settings.
+            // If they disable it, clear the persisted broadcasts.
+            if (value) {
+              await settings.setPersistedBroadcasts(
+                broadcastProvider.broadcasts
+                    .map(
+                      (broadcast) => jsonEncode(
+                        broadcast.service.toJson(),
+                      ),
+                    )
+                    .toList(),
+              );
+            } else {
+              await settings.setPersistedBroadcasts([]);
+            }
+          },
+        ),
+      ],
     );
   }
 }

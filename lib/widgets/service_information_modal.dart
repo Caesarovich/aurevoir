@@ -1,10 +1,13 @@
 import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
 
+/// A modal that displays the information of a service.
 class ServiceInformationModal extends StatelessWidget {
-  final BonsoirService service;
+  /// Constructor that takes a BonsoirService instance.
+  const ServiceInformationModal({required this.service, super.key});
 
-  const ServiceInformationModal({super.key, required this.service});
+  /// The service to display the information of.
+  final BonsoirService service;
 
   @override
   Widget build(BuildContext context) {
@@ -27,40 +30,48 @@ class ServiceInformationModal extends StatelessWidget {
               ),
             ],
           ),
-          Row(children: [
-            Text(
-              'Type: ',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            Text(
-              service.type,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ]),
-          Row(children: [
-            Text(
-              'Port: ',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            Text(
-              service.port.toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ]),
-          Row(children: [
-            Text(
-              'Host: ',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-            Text(
-              'Unknown',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ]),
+          Row(
+            children: [
+              Text(
+                'Type: ',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              Text(
+                service.type,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Port: ',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              Text(
+                service.port.toString(),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Text(
+                'Host: ',
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              Text(
+                'Unknown',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ],
+          ),
           if (service.attributes.isNotEmpty) ...[
             const SizedBox(height: 16),
-            const Text('Attributes:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text(
+              'Attributes:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 4),
             Table(
               children: service.attributes.entries.map((entry) {
@@ -82,8 +93,9 @@ class ServiceInformationModal extends StatelessWidget {
       ),
       actions: <Widget>[
         TextButton(
-            child: const Text('Close'),
-            onPressed: () => Navigator.of(context).pop()),
+          child: const Text('Close'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ],
     );
   }

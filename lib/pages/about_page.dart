@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+/// A page that displays information about the app.
 class AboutPage extends StatefulWidget {
+  /// Constructor for the AboutPage.
   const AboutPage({super.key});
 
   @override
@@ -14,7 +18,7 @@ class _AboutPageState extends State<AboutPage> {
   @override
   void initState() {
     super.initState();
-    _initPackageInfo();
+    unawaited(_initPackageInfo());
   }
 
   Future<void> _initPackageInfo() async {
@@ -29,7 +33,7 @@ class _AboutPageState extends State<AboutPage> {
         title: const Text('About'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,30 +41,29 @@ class _AboutPageState extends State<AboutPage> {
               packageInfo?.appName ?? 'App Name',
               style: Theme.of(context).textTheme.headlineLarge,
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 8),
             Text(
               'Version ${packageInfo?.version}+${packageInfo?.buildNumber}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 16),
             Text(
-              'This is a sample app to demonstrate the creation of an About page in Flutter. '
-              'You can add more information about your app here, such as its purpose, features, '
-              'and any other relevant details.',
+              'This is an open source application that allows you to broadcast'
+              ' and discover services on your local network using mDNS.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 16),
             Text(
               'For more information, visit our website:',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 8),
             const Row(
               children: [
                 Icon(Icons.link),
-                SizedBox(width: 8.0),
+                SizedBox(width: 8),
                 Text(
-                  'GitHub: https://github.com/your-repo',
+                  'GitHub: https://github.com/Caesarovich/aurevoir',
                 ),
               ],
             ),

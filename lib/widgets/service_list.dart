@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+/// Mapping of service types to their corresponding icons.
 const Map<String, IconData> serviceTypeIcons = {
   // Web services
   '_http': Icons.http,
@@ -64,10 +67,13 @@ const Map<String, IconData> serviceTypeIcons = {
   '_mqtt': Icons.wifi,
 };
 
+/// A widget that displays a list of resolved services.
 class ResolvedServiceList extends StatelessWidget {
-  final List<BonsoirService> services;
+  /// Creates a [ResolvedServiceList] widget.
+  const ResolvedServiceList({required this.services, super.key});
 
-  const ResolvedServiceList({super.key, required this.services});
+  /// The list of resolved services to display.
+  final List<BonsoirService> services;
 
   @override
   Widget build(BuildContext context) {
@@ -87,18 +93,24 @@ class ResolvedServiceList extends StatelessWidget {
   }
 }
 
+/// A widget that displays a single resolved service in a row.
 class ResolvedServiceRow extends StatelessWidget {
+  /// Creates a [ResolvedServiceRow] widget.
+  const ResolvedServiceRow({required this.service, super.key});
+
+  /// The resolved service to display.
   final BonsoirService service;
 
-  const ResolvedServiceRow({super.key, required this.service});
-
+  /// Returns the appropriate icon for the service based on its type.
   IconData get serviceIcon {
-    final String serviceType = service.type.split('.').first;
+    final serviceType = service.type.split('.').first;
     return serviceTypeIcons[serviceType] ?? Icons.device_unknown;
   }
 
+  /// Returns a list of host addresses for the service,
+  /// including the hostname if available.
   List<String> get hostAddresses {
-    final List<String> hosts = [
+    final hosts = [
       if (service.hostname != null) service.hostname!,
       ...service.hostAddresses,
     ];
@@ -111,7 +123,7 @@ class ResolvedServiceRow extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 8,
@@ -131,9 +143,11 @@ class ResolvedServiceRow extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Center(
-                        child: Icon(serviceIcon,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 36),
+                        child: Icon(
+                          serviceIcon,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          size: 36,
+                        ),
                       ),
                     ),
                   ),
@@ -146,7 +160,7 @@ class ResolvedServiceRow extends StatelessWidget {
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(8),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,9 +179,10 @@ class ResolvedServiceRow extends StatelessWidget {
                                     .textTheme
                                     .labelMedium
                                     ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurfaceVariant),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
                               ),
                             ],
                           ),
@@ -181,21 +196,25 @@ class ResolvedServiceRow extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text('PORT',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurfaceVariant)),
-                          Text(service.port.toString(),
-                              style: Theme.of(context).textTheme.titleSmall),
+                          Text(
+                            'PORT',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                          ),
+                          Text(
+                            service.port.toString(),
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
                         ],
                       ),
                     ),
@@ -204,14 +223,13 @@ class ResolvedServiceRow extends StatelessWidget {
               ),
             ),
             Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              alignment: WrapAlignment.start,
+              spacing: 8,
+              runSpacing: 8,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text('Hosts:', style: Theme.of(context).textTheme.labelLarge),
                 ...hostAddresses
-                    .map((address) => _CopyableInfoCard(value: address))
+                    .map((address) => _CopyableInfoCard(value: address)),
               ],
             ),
             if (service.attributes.isNotEmpty) ...[
@@ -221,11 +239,15 @@ class ResolvedServiceRow extends StatelessWidget {
                 title: Row(
                   spacing: 6,
                   children: [
-                    Icon(Icons.info_outline,
-                        size: 20,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
-                    Text("${service.attributes.length} Attributes",
-                        style: Theme.of(context).textTheme.bodyMedium),
+                    Icon(
+                      Icons.info_outline,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    Text(
+                      '${service.attributes.length} Attributes',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                   ],
                 ),
                 children: [
@@ -233,7 +255,9 @@ class ResolvedServiceRow extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.only(top: 4, bottom: 6),
                       child: _CopyableInfoCard(
-                          title: entry.key, value: entry.value),
+                        title: entry.key,
+                        value: entry.value,
+                      ),
                     );
                   }),
                 ],
@@ -258,8 +282,8 @@ class _CopyableInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: "Click to copy the value",
-      waitDuration: Duration(milliseconds: 500),
+      message: 'Click to copy the value',
+      waitDuration: const Duration(milliseconds: 500),
       child: Card(
         margin: EdgeInsets.zero,
         color: Theme.of(context).colorScheme.surface,
@@ -267,20 +291,24 @@ class _CopyableInfoCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(6),
           onTap: () {
-            Clipboard.setData(ClipboardData(text: value));
+            unawaited(Clipboard.setData(ClipboardData(text: value)));
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Value copied to clipboard')),
+              const SnackBar(content: Text('Value copied to clipboard')),
             );
           },
           child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-              child: Wrap(children: [
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Wrap(
+              children: [
                 if (title != null)
-                  Text('$title: ',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    '$title: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 Text(value),
-              ])),
+              ],
+            ),
+          ),
         ),
       ),
     );

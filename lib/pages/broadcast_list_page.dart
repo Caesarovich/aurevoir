@@ -5,11 +5,14 @@ import 'package:aurevoir/providers/broadcasts_provider.dart';
 import 'package:aurevoir/providers/settings_provider.dart';
 import 'package:aurevoir/widgets/broadcast_delete_all_dialog.dart';
 import 'package:aurevoir/widgets/service_information_modal.dart';
-import 'package:flutter/material.dart';
 import 'package:bonsoir/bonsoir.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Displays a message when there are no broadcasted services
+/// and provides an option to create a new broadcast.
 class NoBroadcastedServices extends StatelessWidget {
+  /// Constructor for the NoBroadcastedServices widget.
   const NoBroadcastedServices({super.key});
 
   @override
@@ -20,11 +23,11 @@ class NoBroadcastedServices extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('No services are currently being broadcasted.'),
-            const SizedBox(height: 32.0),
+            const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute<void>(
                     builder: (context) => const CreateBroadcastPage(),
                   ),
                 );
@@ -38,7 +41,9 @@ class NoBroadcastedServices extends StatelessWidget {
   }
 }
 
+/// The page that displays the list of broadcasted services.
 class BroadcastListPage extends StatelessWidget {
+  /// Constructor for the BroadcastListPage.
   const BroadcastListPage({super.key});
 
   @override
@@ -70,9 +75,9 @@ class BroadcastListPage extends StatelessWidget {
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute<void>(
                   builder: (context) => const CreateBroadcastPage(),
                 ),
               );
@@ -80,38 +85,50 @@ class BroadcastListPage extends StatelessWidget {
             child: const Icon(Icons.add),
           ),
           body: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Center(
-                child: ListView.builder(
-              itemCount: model.broadcasts.length,
-              itemBuilder: (context, index) {
-                return BroadcastedServiceRow(
-                    broadcast: model.broadcasts[index]);
-              },
-            )),
+              child: ListView.builder(
+                itemCount: model.broadcasts.length,
+                itemBuilder: (context, index) {
+                  return BroadcastedServiceRow(
+                    broadcast: model.broadcasts[index],
+                  );
+                },
+              ),
+            ),
           ),
         );
       },
     );
   }
 
-  void _showDeleteAllConfirmationDialog(BuildContext context) {
-    showDialog(
+  Future<void> _showDeleteAllConfirmationDialog(BuildContext context) async {
+    await showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return const DeleteAllConfirmationDialog();
       },
     );
   }
 }
 
+/// A widget that displays a single broadcasted service in a list.
 class BroadcastedServiceRow extends StatelessWidget {
+  /// Constructor for the BroadcastedServiceRow.
   const BroadcastedServiceRow({
-    super.key,
     required this.broadcast,
+    super.key,
   });
 
+  /// The broadcasted service to display.
   final BonsoirBroadcast broadcast;
+
+  ///
+  String get summaryText => '''
+      ${broadcast.service.type} : ${broadcast.service.port}
+      (${broadcast.isReady ? 'Ready' : 'Not ready'})
+      (${broadcast.isStopped ? 'Stopped' : 'Running'})
+      ''';
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +138,7 @@ class BroadcastedServiceRow extends StatelessWidget {
         leading: broadcast.isReady
             ? const Icon(Icons.wifi)
             : const Icon(Icons.wifi_off),
-        subtitle: Text(
-            '${broadcast.service.type} : ${broadcast.service.port.toString()}  (${broadcast.isReady ? 'Ready' : 'Not ready'}) (${broadcast.isStopped ? 'Stopped' : 'Running'})'),
+        subtitle: Text(summaryText),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -135,62 +151,69 @@ class BroadcastedServiceRow extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.play_arrow_outlined),
                 tooltip: 'Resume broadcast',
-                onPressed: () {
+                onPressed: () async {
                   final broadcastProvider =
-                      Provider.of<BroadcastedServicesProvider>(context,
-                          listen: false);
+                      Provider.of<BroadcastedServicesProvider>(
+                    context,
+                    listen: false,
+                  );
                   final settingsProvider =
                       Provider.of<SettingsProvider>(context, listen: false);
 
-                  broadcastProvider.resumeBroadcast(broadcast).then(
-                        (value) => settingsProvider.setPersistedBroadcasts(
-                          broadcastProvider.broadcasts
-                              .map((broadcast) =>
-                                  jsonEncode(broadcast.service.toJson()))
-                              .toList(),
-                        ),
-                      );
+                  await broadcastProvider.resumeBroadcast(broadcast);
+
+                  await settingsProvider.setPersistedBroadcasts(
+                    broadcastProvider.broadcasts
+                        .map(
+                          (broadcast) => jsonEncode(broadcast.service.toJson()),
+                        )
+                        .toList(),
+                  );
                 },
               ),
             if (broadcast.isReady)
               IconButton(
                 icon: const Icon(Icons.pause),
                 tooltip: 'Pause broadcast',
-                onPressed: () {
+                onPressed: () async {
                   final broadcastProvider =
-                      Provider.of<BroadcastedServicesProvider>(context,
-                          listen: false);
+                      Provider.of<BroadcastedServicesProvider>(
+                    context,
+                    listen: false,
+                  );
                   final settingsProvider =
                       Provider.of<SettingsProvider>(context, listen: false);
 
-                  broadcastProvider.stopBroadcast(broadcast).then(
-                        (value) => settingsProvider.setPersistedBroadcasts(
-                          broadcastProvider.broadcasts
-                              .map((broadcast) =>
-                                  jsonEncode(broadcast.service.toJson()))
-                              .toList(),
-                        ),
-                      );
+                  await broadcastProvider.stopBroadcast(broadcast);
+                  await settingsProvider.setPersistedBroadcasts(
+                    broadcastProvider.broadcasts
+                        .map(
+                          (broadcast) => jsonEncode(broadcast.service.toJson()),
+                        )
+                        .toList(),
+                  );
                 },
               ),
             IconButton(
               icon: const Icon(Icons.delete_outlined),
               tooltip: 'Delete broadcast ${broadcast.service.name}',
-              onPressed: () {
+              onPressed: () async {
                 final broadcastProvider =
-                    Provider.of<BroadcastedServicesProvider>(context,
-                        listen: false);
+                    Provider.of<BroadcastedServicesProvider>(
+                  context,
+                  listen: false,
+                );
                 final settingsProvider =
                     Provider.of<SettingsProvider>(context, listen: false);
 
-                broadcastProvider.removeBroadcast(broadcast).then(
-                      (value) => settingsProvider.setPersistedBroadcasts(
-                        broadcastProvider.broadcasts
-                            .map((broadcast) =>
-                                jsonEncode(broadcast.service.toJson()))
-                            .toList(),
-                      ),
-                    );
+                await broadcastProvider.removeBroadcast(broadcast);
+                await settingsProvider.setPersistedBroadcasts(
+                  broadcastProvider.broadcasts
+                      .map(
+                        (broadcast) => jsonEncode(broadcast.service.toJson()),
+                      )
+                      .toList(),
+                );
               },
             ),
           ],
@@ -199,10 +222,13 @@ class BroadcastedServiceRow extends StatelessWidget {
     );
   }
 
-  void _showInfoDialog(BuildContext context, BonsoirBroadcast broadcast) {
-    showDialog(
+  Future<void> _showInfoDialog(
+    BuildContext context,
+    BonsoirBroadcast broadcast,
+  ) async {
+    await showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return ServiceInformationModal(service: broadcast.service);
       },
     );

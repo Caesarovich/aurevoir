@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 
+/// A widget that adapts its navigation UI based on the available width.
 class AdaptiveNavShell extends StatefulWidget {
+  /// Constructor for the AdaptiveNavShell.
   const AdaptiveNavShell({
-    super.key,
-    this.breakpoint = 600,
     required this.width,
     required this.destinations,
     required this.pages,
+    super.key,
+    this.breakpoint = 600,
   });
 
+  /// The current width of the available space.
   final double width;
+
+  /// The width at which the navigation UI should switch between
+  /// bottom navigation and navigation rail.
   final double breakpoint;
+
+  /// The list of navigation destinations.
   final List<NavigationDestination> destinations;
+
+  /// The list of pages corresponding to the navigation destinations.
   final List<Widget> pages;
 
   @override
@@ -23,8 +33,10 @@ class _AdaptiveNavShellState extends State<AdaptiveNavShell> {
 
   @override
   Widget build(BuildContext context) {
-    assert(widget.destinations.length == widget.pages.length,
-        'Destinations and pages must have the same length');
+    assert(
+      widget.destinations.length == widget.pages.length,
+      'Destinations and pages must have the same length',
+    );
 
     final isWide = widget.width >= widget.breakpoint;
 

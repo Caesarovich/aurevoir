@@ -1,13 +1,16 @@
-import 'package:collection/collection.dart';
-import 'package:bonsoir/bonsoir.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
 
 import 'package:aurevoir/app_logger.dart';
+import 'package:bonsoir/bonsoir.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
-final _logger = getLogger('ServiceProvider');
+final Logger _logger = getLogger('ServiceProvider');
 
 /// This provider is used to discover the available service types.
-/// It also listens to the settings provider to get the user-defined service types.
+/// It also listens to the settings provider
+/// to get the user-defined service types to always search for.
 class ServiceTypeProvider extends ChangeNotifier {
   /// Internal, the user-defined service types.
   Set<String> _userDefinedServiceTypes = {};
@@ -24,9 +27,12 @@ class ServiceTypeProvider extends ChangeNotifier {
 
   /// This is called when the user settings change.
   void updateUserDefinedServiceTypes(List<String> serviceTypes) {
-    // This is to prevent notifying the listeners if the service types are the same.
-    if (SetEquality().equals(_userDefinedServiceTypes, serviceTypes.toSet()))
+    // This is to prevent notifying the listeners
+    // if the service types are the same.
+    if (const SetEquality<String>()
+        .equals(_userDefinedServiceTypes, serviceTypes.toSet())) {
       return;
+    }
 
     _userDefinedServiceTypes = serviceTypes.toSet();
     notifyListeners();
@@ -34,16 +40,17 @@ class ServiceTypeProvider extends ChangeNotifier {
 
   static const _protocolTypes = ['_tcp', '_udp'];
 
-  // This is needed because the wildcard service discovery returns the service in a different format.
+  // This is needed because the wildcard service discovery
+  // returns the service in a different format.
   Set<String> _convertServiceType(BonsoirService service) {
-    String type = service.name;
+    final type = service.name;
 
     // If the service type does not end with a protocol, we add both protocols.
     return _protocolTypes.map((protocol) => '$type.$protocol').toSet();
   }
 
   /// Start the service type discovery.
-  void startServiceTypeDiscovery() async {
+  Future<void> startServiceTypeDiscovery() async {
     if (_serviceTypeDiscovery != null) {
       return;
     }
@@ -63,11 +70,11 @@ class ServiceTypeProvider extends ChangeNotifier {
         _logger.i('🔦 Service type discovery stopped');
       } else if (event is BonsoirDiscoveryServiceFoundEvent) {
         _logger.i('🔦 Service type found: ${event.service}');
-        Set<String> serviceTypes = _convertServiceType(event.service);
+        final serviceTypes = _convertServiceType(event.service);
         _serviceTypes.addAll(serviceTypes);
       } else if (event is BonsoirDiscoveryServiceLostEvent) {
         _logger.i('🔦 Service type lost: ${event.service}');
-        Set<String> serviceTypes = _convertServiceType(event.service);
+        final serviceTypes = _convertServiceType(event.service);
         _serviceTypes.removeAll(serviceTypes);
       } else if (event is BonsoirDiscoveryServiceUpdatedEvent) {
         _logger.i('🔦 Service type updated: ${event.service}');
@@ -83,26 +90,23 @@ class ServiceTypeProvider extends ChangeNotifier {
       notifyListeners();
     });
 
-    _serviceTypeDiscovery!.start();
+    await _serviceTypeDiscovery!.start();
   }
 
   /// Stop the service type discovery.
-  void stopServiceTypeDiscovery() async {
-    _serviceTypeDiscovery?.stop();
+  Future<void> stopServiceTypeDiscovery() async {
+    await _serviceTypeDiscovery?.stop();
     _serviceTypeDiscovery = null;
   }
 
   @override
   void dispose() {
-    stopServiceTypeDiscovery();
+    unawaited(stopServiceTypeDiscovery());
     super.dispose();
-  }
-
-  ServiceTypeProvider() {
-    startServiceTypeDiscovery();
   }
 }
 
+/// This provider is used to discover the available services of the given types.
 class ServiceProvider extends ChangeNotifier {
   bool _shouldResolveServices = false;
 
@@ -123,24 +127,70 @@ class ServiceProvider extends ChangeNotifier {
   UnmodifiableListView<BonsoirService> get resolvedServices =>
       UnmodifiableListView(_resolvedServices);
 
-  void updateServiceTypes(Set<String> serviceTypes) {
-    _logger.d('🔦 Updating service types: $serviceTypes');
-    for (String type in serviceTypes) {
+  /// Sets a list of service types to discover.
+  /// This is to add user-defined service types to the discovery process.
+  Future<void> updateServiceTypes(Set<String> serviceTypes) async {
+    _logger.d(
+      '🔦 Updating service types: $serviceTypes',
+    );
+    final existingServiceTypes = _discoveries.keys.toList(growable: false);
+
+    for (final type in serviceTypes) {
       try {
-        startServiceDiscovery(type);
-      } catch (e) {
+        await startServiceDiscovery(type);
+      } on Exception catch (e) {
         _logger.e('Error starting service discovery for $type: $e');
       }
     }
 
-    for (String type in _discoveries.keys) {
+    for (final type in existingServiceTypes) {
       if (!serviceTypes.contains(type)) {
-        stopServiceDiscovery(type);
+        try {
+          await stopServiceDiscovery(type);
+        } on Object catch (e) {
+          _logger.e(
+            'Error stopping service discovery for $type: $e',
+          );
+        }
       }
     }
   }
 
-  void setShouldResolveServices(bool resolveServices) {
+  /// Synchronizes the current service discovery settings.
+  ///
+  /// Keeps resolve mode and discovered types aligned with the latest settings.
+  void syncConfiguration({
+    required bool resolveServices,
+    required Set<String> serviceTypes,
+  }) {
+    unawaited(
+      _syncConfiguration(
+        resolveServices: resolveServices,
+        serviceTypes: serviceTypes,
+      ),
+    );
+  }
+
+  Future<void> _syncConfiguration({
+    required bool resolveServices,
+    required Set<String> serviceTypes,
+  }) async {
+    try {
+      await setShouldResolveServices(resolveServices);
+      await updateServiceTypes(serviceTypes);
+    } on Object catch (error, stackTrace) {
+      _logger.e(
+        'Error synchronizing service discovery configuration',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Sets whether to resolve the services or not.
+  /// When set to true, the provider will try to resolve the services.
+  // ignore: avoid_positional_boolean_parameters
+  Future<void> setShouldResolveServices(bool resolveServices) async {
     if (_shouldResolveServices == resolveServices) return;
 
     _shouldResolveServices = resolveServices;
@@ -148,8 +198,8 @@ class ServiceProvider extends ChangeNotifier {
     _logger.d('🔍 Resolve services: $resolveServices');
 
     if (_shouldResolveServices) {
-      for (BonsoirService service in _services) {
-        service.resolve(_discoveries[service.type]!.serviceResolver);
+      for (final service in _services) {
+        await service.resolve(_discoveries[service.type]!.serviceResolver);
       }
     } else {
       _resolvedServices.clear();
@@ -159,25 +209,25 @@ class ServiceProvider extends ChangeNotifier {
   }
 
   /// Start the service discovery for the given type.
-  void startServiceDiscovery(String type) async {
+  Future<void> startServiceDiscovery(String type) async {
     if (_discoveries.containsKey(type)) {
       return;
     }
 
-    _logger.d("🔍 Initializing service discovery for type: $type");
+    _logger.d('🔍 Initializing service discovery for type: $type');
 
-    BonsoirDiscovery discovery = BonsoirDiscovery(type: type);
+    final discovery = BonsoirDiscovery(type: type);
     await discovery.initialize();
 
-    _logger.i("🔍 Service discovery for type $type initialized !");
+    _logger.i('🔍 Service discovery for type $type initialized !');
 
-    discovery.eventStream!.listen((event) {
+    discovery.eventStream!.listen((event) async {
       if (event is BonsoirDiscoveryStartedEvent) {
         _logger.i('🔍 Service discovery for type $type started');
       } else if (event is BonsoirDiscoveryStoppedEvent) {
         _logger.i('🔍 Service discovery for type $type stopped');
       } else if (event is BonsoirDiscoveryServiceFoundEvent) {
-        _onServiceFound(event.service);
+        await _onServiceFound(event.service);
       } else if (event is BonsoirDiscoveryServiceResolvedEvent) {
         _onServiceResolved(event.service);
       } else if (event is BonsoirDiscoveryServiceUpdatedEvent) {
@@ -195,17 +245,17 @@ class ServiceProvider extends ChangeNotifier {
     });
 
     _discoveries[type] = discovery;
-    discovery.start();
-    _logger.i("🔍 Service discovery for type $type started !");
+    await discovery.start();
+    _logger.i('🔍 Service discovery for type $type started !');
   }
 
-  void _onServiceFound(BonsoirService service) {
+  Future<void> _onServiceFound(BonsoirService service) async {
     _logger.i('🔍 Service Found $service');
     _services.add(service);
     notifyListeners();
 
     if (_shouldResolveServices) {
-      service.resolve(_discoveries[service.type]!.serviceResolver);
+      await service.resolve(_discoveries[service.type]!.serviceResolver);
     }
   }
 
@@ -226,7 +276,7 @@ class ServiceProvider extends ChangeNotifier {
 
   void _onServiceUpdated(BonsoirService service) {
     _logger.i('🔍 Service updated : ${service.toJson()}');
-    int index = _services.indexWhere((s) => s.name == service.name);
+    final index = _services.indexWhere((s) => s.name == service.name);
     if (index != -1) {
       _services[index] = service;
       notifyListeners();
@@ -238,7 +288,7 @@ class ServiceProvider extends ChangeNotifier {
   }
 
   /// Stop the service discovery for the given type.
-  void stopServiceDiscovery(String type) async {
+  Future<void> stopServiceDiscovery(String type) async {
     if (!_discoveries.containsKey(type)) {
       return;
     }
@@ -250,8 +300,8 @@ class ServiceProvider extends ChangeNotifier {
   }
 
   /// Stop all the service discoveries.
-  void stopAllServiceDiscoveries() async {
-    for (BonsoirDiscovery discovery in _discoveries.values) {
+  Future<void> stopAllServiceDiscoveries() async {
+    for (final discovery in _discoveries.values) {
       await discovery.stop();
     }
 
@@ -263,7 +313,7 @@ class ServiceProvider extends ChangeNotifier {
   /// Dispose the model.
   @override
   void dispose() {
-    stopAllServiceDiscoveries();
+    unawaited(stopAllServiceDiscoveries());
     super.dispose();
   }
 }

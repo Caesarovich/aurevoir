@@ -7,23 +7,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+/// Validates the service type entered by the user.
 String? validateServiceType(String? value) {
   if (value == null || value.isEmpty) {
     return 'Please enter a service type';
   }
 
-  List<String> parts = value.split('.');
+  final parts = value.split('.');
   if (parts.length != 2) {
     return 'Service type must be in the format _service._tcp or _service._udp';
   }
 
-  String secondPart = parts.last;
+  final secondPart = parts.last;
 
   if (secondPart != '_tcp' && secondPart != '_udp') {
     return 'Service type must end with _tcp or _udp';
   }
 
-  String firstPart = parts.first;
+  var firstPart = parts.first;
 
   if (!firstPart.startsWith('_')) {
     return 'Service type must begin with an underscore';
@@ -39,11 +40,11 @@ String? validateServiceType(String? value) {
     return 'Service type must not end with a hyphen';
   }
 
-  if (firstPart.contains(RegExp(r'-{2,}'))) {
+  if (firstPart.contains(RegExp('-{2,}'))) {
     return 'Service type must not contain adjacent hyphens';
   }
 
-  if (firstPart.contains(RegExp(r'[^A-Za-z0-9-]'))) {
+  if (firstPart.contains(RegExp('[^A-Za-z0-9-]'))) {
     return 'Service type must contain only letters, digits, and hyphens';
   }
 
@@ -61,7 +62,7 @@ String? _validatePort(String? value) {
   if (int.tryParse(value) == null) {
     return 'Please enter a valid port number';
   }
-  int port = int.parse(value);
+  final port = int.parse(value);
   if (port < 0 || port > 65535) {
     return 'Port number must be between 0 and 65535';
   }
@@ -89,7 +90,7 @@ String? _validateAttributeKey(String? value) {
     return 'Attribute keys must contain only printable ASCII characters';
   }
 
-  if (value.contains("=")) {
+  if (value.contains('=')) {
     return 'Attribute keys must not contain the equal sign';
   }
 
@@ -112,7 +113,9 @@ String? _validateAttributeValue(String? value) {
   return null;
 }
 
+/// A page that allows the user to create a new broadcasted service.
 class CreateBroadcastPage extends StatefulWidget {
+  /// Constructor for the CreateBroadcastPage.
   const CreateBroadcastPage({super.key});
 
   @override
@@ -150,7 +153,7 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: const EdgeInsets.all(32),
             child: Form(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               key: _formKey,
@@ -161,32 +164,37 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
                       padding: const EdgeInsets.fromLTRB(32, 8, 32, 32),
                       child: Column(
                         children: [
-                          Text('Service Information',
-                              style: Theme.of(context).textTheme.labelLarge),
+                          Text(
+                            'Service Information',
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
                           TextFormField(
                             autofocus: true,
                             decoration: const InputDecoration(
-                                labelText: 'Service name'),
+                              labelText: 'Service name',
+                            ),
                             controller: _serviceNameController,
                             onFieldSubmitted: (_) => _handleSubmit(),
                             validator: _validateServiceName,
                           ),
-                          const SizedBox(height: 16.0),
+                          const SizedBox(height: 16),
                           TextFormField(
                             decoration: const InputDecoration(
-                                labelText: 'Service type'),
+                              labelText: 'Service type',
+                            ),
                             controller: _serviceTypeController,
                             onFieldSubmitted: (_) => _handleSubmit(),
                             validator: validateServiceType,
                           ),
-                          const SizedBox(height: 16.0),
+                          const SizedBox(height: 16),
                           TextFormField(
                             decoration: const InputDecoration(
-                                labelText: 'Service port'),
+                              labelText: 'Service port',
+                            ),
                             controller: _servicePortController,
                             keyboardType: TextInputType.number,
                             inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
+                              FilteringTextInputFormatter.digitsOnly,
                             ],
                             onFieldSubmitted: (_) => _handleSubmit(),
                             validator: _validatePort,
@@ -195,92 +203,102 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 16),
                   Card(
-                      child: Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 8, 32, 32),
-                    child: Column(
-                      children: [
-                        Text('Service Attributes',
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        const SizedBox(height: 8.0),
-                        ..._attributeKeyControllers
-                            .asMap()
-                            .entries
-                            .map((entry) {
-                          int index = entry.key;
-                          return Row(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 8, 32, 32),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Service Attributes',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 8),
+                          ..._attributeKeyControllers
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            final index = entry.key;
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Attribute Key',
+                                    ),
+                                    controller: _attributeKeyControllers[index],
+                                    maxLength: 9,
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    validator: _validateAttributeKey,
+                                    onChanged: (_) => setState(() {}),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: TextFormField(
+                                    decoration: const InputDecoration(
+                                      labelText: 'Attribute Value',
+                                    ),
+                                    controller:
+                                        _attributeValueControllers[index],
+                                    maxLength: 254 -
+                                        _attributeKeyControllers[index]
+                                            .text
+                                            .length,
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    validator: _validateAttributeValue,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  tooltip: 'Remove attribute',
+                                  onPressed: () {
+                                    setState(() {
+                                      _attributeKeyControllers[index].dispose();
+                                      _attributeValueControllers[index]
+                                          .dispose();
+                                      _attributeKeyControllers.removeAt(index);
+                                      _attributeValueControllers
+                                          .removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          }),
+                          Row(
                             children: [
                               Expanded(
                                 child: TextFormField(
+                                  enabled: false,
                                   decoration: const InputDecoration(
-                                      labelText: 'Attribute Key'),
-                                  controller: _attributeKeyControllers[index],
-                                  maxLength: 9,
-                                  maxLengthEnforcement:
-                                      MaxLengthEnforcement.enforced,
-                                  validator: _validateAttributeKey,
-                                  onChanged: (_) => setState(() {}),
+                                    labelText: 'Attribute Key',
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 8.0),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: TextFormField(
+                                  enabled: false,
                                   decoration: const InputDecoration(
-                                      labelText: 'Attribute Value'),
-                                  controller: _attributeValueControllers[index],
-                                  maxLength: 254 -
-                                      _attributeKeyControllers[index]
-                                          .text
-                                          .length,
-                                  maxLengthEnforcement:
-                                      MaxLengthEnforcement.enforced,
-                                  validator: _validateAttributeValue,
+                                    labelText: 'Attribute Value',
+                                  ),
                                 ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.remove),
-                                tooltip: 'Remove attribute',
-                                onPressed: () {
-                                  setState(() {
-                                    _attributeKeyControllers[index].dispose();
-                                    _attributeValueControllers[index].dispose();
-                                    _attributeKeyControllers.removeAt(index);
-                                    _attributeValueControllers.removeAt(index);
-                                  });
-                                },
-                              )
+                                icon: const Icon(Icons.add),
+                                tooltip: 'Add attribute',
+                                onPressed: _addAttribute,
+                              ),
                             ],
-                          );
-                        }),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                enabled: false,
-                                decoration: const InputDecoration(
-                                    labelText: 'Attribute Key'),
-                              ),
-                            ),
-                            const SizedBox(width: 8.0),
-                            Expanded(
-                              child: TextFormField(
-                                enabled: false,
-                                decoration: const InputDecoration(
-                                    labelText: 'Attribute Value'),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              tooltip: 'Add attribute',
-                              onPressed: _addAttribute,
-                            )
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
-                  const SizedBox(height: 32.0),
+                  ),
+                  const SizedBox(height: 32),
                   ElevatedButton.icon(
                     onPressed: _handleSubmit,
                     icon: const Icon(Icons.wifi_tethering),
@@ -300,18 +318,21 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
     _serviceNameController.dispose();
     _serviceTypeController.dispose();
     _servicePortController.dispose();
-    for (var controller in _attributeKeyControllers) {
+    for (final controller in _attributeKeyControllers) {
       controller.dispose();
     }
-    for (var controller in _attributeValueControllers) {
+    for (final controller in _attributeValueControllers) {
       controller.dispose();
     }
     super.dispose();
   }
 
-  void _handleSubmit() {
+  Future<void> _handleSubmit() async {
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     if (_formKey.currentState!.validate()) {
-      BonsoirService service = BonsoirService(
+      final service = BonsoirService(
         name: _serviceNameController.text,
         type: _serviceTypeController.text,
         port: int.parse(_servicePortController.text),
@@ -319,9 +340,9 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
             _attributeKeyControllers.asMap().entries.fold<Map<String, String>>(
           {},
           (previousValue, entry) {
-            int index = entry.key;
-            String key = _attributeKeyControllers[index].text;
-            String value = _attributeValueControllers[index].text;
+            final index = entry.key;
+            final key = _attributeKeyControllers[index].text;
+            final value = _attributeValueControllers[index].text;
             if (key.isNotEmpty && value.isNotEmpty) {
               previousValue[key] = value;
             }
@@ -335,20 +356,21 @@ class _CreateBroadcastPageState extends State<CreateBroadcastPage> {
       final broadcastProvider =
           Provider.of<BroadcastedServicesProvider>(context, listen: false);
 
-      broadcastProvider.broadcastService(service).then(
-        (value) {
-          settingsProvider.setPersistedBroadcasts(
+      await broadcastProvider.broadcastService(service).then(
+        (value) async {
+          await settingsProvider.setPersistedBroadcasts(
             broadcastProvider.broadcasts
                 .map((broadcast) => jsonEncode(broadcast.service.toJson()))
                 .toList(),
           );
         },
-      ).catchError((e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to broadcast service: $e')));
+      ).catchError((dynamic e) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(content: Text('Failed to broadcast service: $e')),
+        );
       });
 
-      Navigator.of(context).pop();
+      navigator.pop();
     }
   }
 }

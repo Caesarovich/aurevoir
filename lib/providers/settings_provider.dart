@@ -1,75 +1,92 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// This provider is used to manage the user settings.
 class SettingsProvider extends ChangeNotifier {
-  final SharedPreferences prefs;
-
+  /// Constructor that takes a SharedPreferences instance.
   SettingsProvider({required this.prefs}) {
     loadSettings();
   }
 
+  /// The SharedPreferences instance used to persist settings.
+  final SharedPreferences prefs;
+
   // Dark mode settings
+  /// The key used to store the dark mode setting in SharedPreferences.
   static const String darkModeKey = 'darkMode';
   bool _darkMode = false;
 
+  /// Whether dark mode is enabled or not
   bool get darkMode => _darkMode;
 
-  void toggleDarkMode() {
+  /// Toggle the dark mode setting
+  Future<void> toggleDarkMode() async {
     _darkMode = !_darkMode;
-    _saveSettings();
+    await saveSettings();
     notifyListeners();
   }
 
   // Persist broadcasts settings
+  /// The key used to store the persist broadcasts setting in SharedPreferences.
   static const String persistBroadcastsKey = 'persistBroadcasts';
   bool _persistBroadcasts = false;
 
+  /// Whether to persist broadcasts or not
   bool get persistBroadcasts => _persistBroadcasts;
 
-  void togglePersistBroadcasts() {
+  /// Toggle the persist broadcasts setting
+  Future<void> togglePersistBroadcasts() async {
     _persistBroadcasts = !_persistBroadcasts;
-    _saveSettings();
+    await saveSettings();
     notifyListeners();
   }
 
   // Persisted broadcasts list
+  /// The key used to store the persisted broadcasts in SharedPreferences.
   static const String persistedBroadcastsKey = 'persistedBroadcasts';
   List<String> _persistedBroadcasts = [];
 
+  /// The persisted broadcasts list
   List<String> get persistedBroadcasts => _persistedBroadcasts;
 
-  void setPersistedBroadcasts(List<String> broadcasts) {
+  /// Set the persisted broadcasts list
+  Future<void> setPersistedBroadcasts(List<String> broadcasts) async {
     _persistedBroadcasts = broadcasts;
-    _saveSettings();
+    await saveSettings();
     notifyListeners();
   }
 
   // mDNS services settings
+  /// The key used to store the mDNS services in SharedPreferences.
   static const String mdnsServicesKey = 'mdnsServices';
   List<String> _mdnsServices = [];
 
+  /// The mDNS services to be always discovered
   List<String> get mdnsServices => _mdnsServices;
 
-  void setMdnsServices(List<String> services) {
+  /// Set the mDNS services to be always discovered
+  Future<void> setMdnsServices(List<String> services) async {
     _mdnsServices = services;
-    _saveSettings();
+    await saveSettings();
     notifyListeners();
   }
 
   // Resolve services settings
-
+  /// The key used to store the resolve services setting in SharedPreferences.
   static const String resolveServicesKey = 'resolveServices';
-  bool _resolveServices = true;
+  var _resolveServices = true;
 
+  /// Whether to resolve services or not
   bool get resolveServices => _resolveServices;
 
-  void toggleServiceResolution() {
+  /// Toggle the resolve services setting
+  Future<void> toggleServiceResolution() async {
     _resolveServices = !_resolveServices;
-    _saveSettings();
+    await saveSettings();
     notifyListeners();
   }
 
-  // Load and save settings
+  /// Load settings from SharedPreferences
   void loadSettings() {
     _darkMode = prefs.getBool(darkModeKey) ?? false;
     _resolveServices = prefs.getBool(resolveServicesKey) ?? true;
@@ -79,11 +96,12 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _saveSettings() {
-    prefs.setBool(darkModeKey, _darkMode);
-    prefs.setBool(resolveServicesKey, _resolveServices);
-    prefs.setStringList(mdnsServicesKey, _mdnsServices);
-    prefs.setStringList(persistedBroadcastsKey, _persistedBroadcasts);
-    prefs.setBool(persistBroadcastsKey, _persistBroadcasts);
+  /// Save settings to SharedPreferences
+  Future<void> saveSettings() async {
+    await prefs.setBool(darkModeKey, _darkMode);
+    await prefs.setBool(resolveServicesKey, _resolveServices);
+    await prefs.setStringList(mdnsServicesKey, _mdnsServices);
+    await prefs.setStringList(persistedBroadcastsKey, _persistedBroadcasts);
+    await prefs.setBool(persistBroadcastsKey, _persistBroadcasts);
   }
 }
