@@ -1,26 +1,25 @@
 # Aurevoir
+
 <img width="1024" height="512" alt="AurevoirBanner" src="https://github.com/user-attachments/assets/eabd59c7-64ab-4165-ad4e-30e06889894a" />
 
-A new Flutter project.
 
-## Getting Started
+## About
 
-This project is a starting point for a Flutter application.
+Aurevoir is a lightweight, open-source, and cross-platform application designed to help users and system administrators to observe [Zeroconf](https://en.wikipedia.org/wiki/Zero-configuration_networking) network services and devices.
 
-A few resources to get you started if this is your first Flutter project:
+It provides a simple and intuitive interface to discover and create mDNS (Multicast DNS) service records.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+This application is built using [Flutter](https://flutter.dev/) and [Dart](https://dart.dev/) for easy cross-platform compatibilit. The main dependency is the [Bonsoir](https://pub.dev/packages/bonsoir) package, which provides the necessary functionality to interact with mDNS services.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Features
 
+- Discover mDNS services and devices on the local network.
+- Search and filter discovered services by type, name, or domain.
+- Create and manage mDNS service records. 
+- Persistent user settings and preferences.
 
-## Generating Icons
+## Contributing
 
-This project uses the `flutter_launcher_icons` package to generate app icons. To generate the icons, run the following command in the terminal:
+Please feel free to open issues, make sure to give a clear description of the problem or feature request.
 
-```bash
-flutter pub run flutter_launcher_icons:main
-```
+If you wish to contribute code, please open an issue first to discuss your proposed changes. Once approved, you can fork the repository, make your changes, and submit a pull request.
