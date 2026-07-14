@@ -20,6 +20,9 @@ jobs:
           channel: stable
           version: 3.41.6
 
+      - name: Install dependencies
+        run: flutter pub get
+
       - name: Verify code formatting
         run: dart format --set-exit-if-changed .
 
@@ -35,6 +38,9 @@ jobs:
         with:
           channel: stable
           version: 3.41.6
+
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Verify code analysis
         run: dart analyze
