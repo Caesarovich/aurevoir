@@ -66,3 +66,6 @@ devenv.local.yaml
 
 # Flake
 result
+
+# Fresh editor
+.fresh/
