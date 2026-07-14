@@ -13,7 +13,7 @@
   languages.dart.enable = true;
 
   packages = with pkgs; [
-    yq
+    yq-go
   ];
 
   tasks = {
@@ -35,7 +35,7 @@
     };
     "aurevoir-app:generate:pubspec-lock-json" = {
       description = "Generate pubspec.lock.json file";
-      exec = "yq . pubspec.lock > pubspec.lock.json";
+      exec = "yq -o=json . pubspec.lock > pubspec.lock.json";
     };
     "aurevoir-app:generate:icons" = {
       description = "Generate launcher icons for the app";
