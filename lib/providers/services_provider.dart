@@ -2,6 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
 
+import 'package:aurevoir/app_logger.dart';
+
+final _logger = getLogger('ServiceProvider');
+
 /// This provider is used to discover the available service types.
 /// It also listens to the settings provider to get the user-defined service types.
 class ServiceTypeProvider extends ChangeNotifier {
@@ -44,37 +48,37 @@ class ServiceTypeProvider extends ChangeNotifier {
       return;
     }
 
-    print('🔦 Initializing service discovery');
+    _logger.d('🔦 Initializing service discovery');
 
     _serviceTypeDiscovery = BonsoirDiscovery(type: '_services._dns-sd._udp');
     await _serviceTypeDiscovery!.initialize();
-    print('🔦 Service discovery initialized !');
+    _logger.i('🔦 Service discovery initialized !');
 
     _serviceTypeDiscovery!.eventStream!.listen((event) {
-      print('🔦 Service type discovery event: $event');
+      _logger.d('🔦 Service type discovery event: $event');
 
       if (event is BonsoirDiscoveryStartedEvent) {
-        print('🔦 Service type discovery started');
+        _logger.i('🔦 Service type discovery started');
       } else if (event is BonsoirDiscoveryStoppedEvent) {
-        print('🔦 Service type discovery stopped');
+        _logger.i('🔦 Service type discovery stopped');
       } else if (event is BonsoirDiscoveryServiceFoundEvent) {
-        print('🔦 Service type found: ${event.service}');
+        _logger.i('🔦 Service type found: ${event.service}');
         Set<String> serviceTypes = _convertServiceType(event.service);
         _serviceTypes.addAll(serviceTypes);
       } else if (event is BonsoirDiscoveryServiceLostEvent) {
-        print('🔦 Service type lost: ${event.service}');
+        _logger.i('🔦 Service type lost: ${event.service}');
         Set<String> serviceTypes = _convertServiceType(event.service);
         _serviceTypes.removeAll(serviceTypes);
       } else if (event is BonsoirDiscoveryServiceUpdatedEvent) {
-        print('🔦 Service type updated: ${event.service}');
+        _logger.i('🔦 Service type updated: ${event.service}');
       } else if (event is BonsoirDiscoveryServiceResolvedEvent) {
-        print('🔦 Service type resolved: ${event.service}');
+        _logger.i('🔦 Service type resolved: ${event.service}');
       } else if (event is BonsoirDiscoveryServiceResolveFailedEvent) {
-        print('🔦 Service type resolve failed: ${event.service}');
+        _logger.w('🔦 Service type resolve failed: ${event.service}');
       } else if (event is BonsoirDiscoveryUnknownEvent) {
-        print('🔦 Service type discovery unknown event: $event');
+        _logger.e('🔦 Service type discovery unknown event: $event');
       } else {
-        print('🔦 Service type discovery unhandled event: $event');
+        _logger.f('🔦 Service type discovery unhandled event: $event');
       }
       notifyListeners();
     });
@@ -120,12 +124,12 @@ class ServiceProvider extends ChangeNotifier {
       UnmodifiableListView(_resolvedServices);
 
   void updateServiceTypes(Set<String> serviceTypes) {
-    print('🔦 Updating service types: $serviceTypes');
+    _logger.d('🔦 Updating service types: $serviceTypes');
     for (String type in serviceTypes) {
       try {
         startServiceDiscovery(type);
       } catch (e) {
-        print('Error starting service discovery for $type: $e');
+        _logger.e('Error starting service discovery for $type: $e');
       }
     }
 
@@ -141,7 +145,7 @@ class ServiceProvider extends ChangeNotifier {
 
     _shouldResolveServices = resolveServices;
 
-    print('🔍 Resolve services: $resolveServices');
+    _logger.d('🔍 Resolve services: $resolveServices');
 
     if (_shouldResolveServices) {
       for (BonsoirService service in _services) {
@@ -160,18 +164,18 @@ class ServiceProvider extends ChangeNotifier {
       return;
     }
 
-    print("🔍 Initializing service discovery for type: $type");
+    _logger.d("🔍 Initializing service discovery for type: $type");
 
     BonsoirDiscovery discovery = BonsoirDiscovery(type: type);
     await discovery.initialize();
 
-    print("🔍 Service discovery for type $type initialized !");
+    _logger.i("🔍 Service discovery for type $type initialized !");
 
     discovery.eventStream!.listen((event) {
       if (event is BonsoirDiscoveryStartedEvent) {
-        print('🔍 Service discovery for type $type started');
+        _logger.i('🔍 Service discovery for type $type started');
       } else if (event is BonsoirDiscoveryStoppedEvent) {
-        print('🔍 Service discovery for type $type stopped');
+        _logger.i('🔍 Service discovery for type $type stopped');
       } else if (event is BonsoirDiscoveryServiceFoundEvent) {
         _onServiceFound(event.service);
       } else if (event is BonsoirDiscoveryServiceResolvedEvent) {
@@ -181,19 +185,20 @@ class ServiceProvider extends ChangeNotifier {
       } else if (event is BonsoirDiscoveryServiceResolveFailedEvent) {
         _onServiceResolvedError(event.service);
       } else if (event is BonsoirDiscoveryUnknownEvent) {
-        print('🔍 Service discovery for type $type unknown event: $event');
+        _logger.e('🔍 Service discovery for type $type unknown event: $event');
       } else {
-        print('🔍 Service discovery for type $type unhandled event: $event');
+        _logger
+            .f('🔍 Service discovery for type $type unhandled event: $event');
       }
     });
 
     _discoveries[type] = discovery;
     discovery.start();
-    print("🔍 Service discovery for type $type started !");
+    _logger.i("🔍 Service discovery for type $type started !");
   }
 
   void _onServiceFound(BonsoirService service) {
-    print('🔍 Service Found $service');
+    _logger.i('🔍 Service Found $service');
     _services.add(service);
     notifyListeners();
 
@@ -203,14 +208,14 @@ class ServiceProvider extends ChangeNotifier {
   }
 
   void _onServiceResolved(BonsoirService service) {
-    print('🔍 Service resolved : ${service.toJson()}');
+    _logger.i('🔍 Service resolved : ${service.toJson()}');
     _resolvedServices.add(service);
     // _services.remove(service); TODO
     notifyListeners();
   }
 
   void _onServiceLost(BonsoirService service) {
-    print('🔍 Service lost : ${service.toJson()}');
+    _logger.i('🔍 Service lost : ${service.toJson()}');
     _services.remove(service);
     _resolvedServices
         .removeWhere((resolvedService) => resolvedService.name == service.name);
@@ -218,7 +223,7 @@ class ServiceProvider extends ChangeNotifier {
   }
 
   void _onServiceResolvedError(BonsoirService? service) {
-    print('🔍 Service resolved error : ${service?.toJson()}');
+    _logger.e('🔍 Service resolved error : ${service?.toJson()}');
   }
 
   /// Stop the service discovery for the given type.
