@@ -180,6 +180,8 @@ class ServiceProvider extends ChangeNotifier {
         _onServiceFound(event.service);
       } else if (event is BonsoirDiscoveryServiceResolvedEvent) {
         _onServiceResolved(event.service);
+      } else if (event is BonsoirDiscoveryServiceUpdatedEvent) {
+        _onServiceUpdated(event.service);
       } else if (event is BonsoirDiscoveryServiceLostEvent) {
         _onServiceLost(event.service);
       } else if (event is BonsoirDiscoveryServiceResolveFailedEvent) {
@@ -220,6 +222,15 @@ class ServiceProvider extends ChangeNotifier {
     _resolvedServices
         .removeWhere((resolvedService) => resolvedService.name == service.name);
     notifyListeners();
+  }
+
+  void _onServiceUpdated(BonsoirService service) {
+    _logger.i('🔍 Service updated : ${service.toJson()}');
+    int index = _services.indexWhere((s) => s.name == service.name);
+    if (index != -1) {
+      _services[index] = service;
+      notifyListeners();
+    }
   }
 
   void _onServiceResolvedError(BonsoirService? service) {
