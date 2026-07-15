@@ -213,7 +213,7 @@ class PackageRef {
   Package resolve() => allDependencies.firstWhere((d) => d.name == name);
 }
 
-/// _fe_analyzer_shared 93.0.0
+/// _fe_analyzer_shared 97.0.0
 const __fe_analyzer_shared = Package(
   name: '_fe_analyzer_shared',
   description:
@@ -221,7 +221,7 @@ const __fe_analyzer_shared = Package(
   repository:
       'https://github.com/dart-lang/sdk/tree/main/pkg/_fe_analyzer_shared',
   authors: [],
-  version: '93.0.0',
+  version: '97.0.0',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
@@ -256,14 +256,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// analyzer 10.0.1
+/// analyzer 11.0.0
 const _analyzer = Package(
   name: 'analyzer',
   description:
       'This package provides a library that performs static analysis of Dart code.',
   repository: 'https://github.com/dart-lang/sdk/tree/main/pkg/analyzer',
   authors: [],
-  version: '10.0.1',
+  version: '11.0.0',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
@@ -738,14 +738,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// build 4.0.6
+/// build 4.0.7
 const _build = Package(
   name: 'build',
   description:
       'A package for authoring build_runner compatible code generators.',
   repository: 'https://github.com/dart-lang/build/tree/master/build',
   authors: [],
-  version: '4.0.6',
+  version: '4.0.7',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
@@ -1404,13 +1404,13 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// coverage 1.15.0
+/// coverage 1.15.1
 const _coverage = Package(
   name: 'coverage',
   description: 'Coverage data manipulation and formatting',
   repository: 'https://github.com/dart-lang/tools/tree/main/pkgs/coverage',
   authors: [],
-  version: '1.15.0',
+  version: '1.15.1',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
@@ -1639,14 +1639,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// dbus 0.7.13
+/// dbus 0.7.14
 const _dbus = Package(
   name: 'dbus',
   description:
       'A native Dart implementation of the D-Bus message bus client. This package allows Dart applications to directly access services on the Linux desktop.',
   homepage: 'https://github.com/canonical/dbus.dart',
   authors: [],
-  version: '0.7.13',
+  version: '0.7.14',
   spdxIdentifiers: ['MPL-2.0'],
   isMarkdown: false,
   isSdk: false,
@@ -2877,18 +2877,18 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// image 4.9.1
+/// image 4.8.0
 const _image = Package(
   name: 'image',
   description:
       'Dart Image Library provides server and web apps the ability to load, manipulate, and save images with various image file formats.',
   homepage: 'https://github.com/brendan-duncan/image',
   authors: [],
-  version: '4.9.1',
+  version: '4.8.0',
   spdxIdentifiers: ['MIT'],
   isMarkdown: false,
   isSdk: false,
-  dependencies: [PackageRef('archive'), PackageRef('xml')],
+  dependencies: [PackageRef('archive'), PackageRef('meta'), PackageRef('xml')],
   devDependencies: [
     PackageRef('http'),
     PackageRef('lints'),
@@ -4268,14 +4268,14 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// path_provider_linux 2.2.1
+/// path_provider_linux 2.2.2
 const _path_provider_linux = Package(
   name: 'path_provider_linux',
   description: 'Linux implementation of the path_provider plugin',
   repository:
       'https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_linux',
   authors: [],
-  version: '2.2.1',
+  version: '2.2.2',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
@@ -4287,7 +4287,7 @@ const _path_provider_linux = Package(
     PackageRef('xdg_directories')
   ],
   devDependencies: [PackageRef('flutter_test')],
-  license: '''Copyright 2013 The Flutter Authors. All rights reserved.
+  license: '''Copyright 2013 The Flutter Authors
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -4314,14 +4314,14 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// path_provider_platform_interface 2.1.2
+/// path_provider_platform_interface 2.1.3
 const _path_provider_platform_interface = Package(
   name: 'path_provider_platform_interface',
   description: 'A common platform interface for the path_provider plugin.',
   repository:
       'https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_platform_interface',
   authors: [],
-  version: '2.1.2',
+  version: '2.1.3',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
@@ -4331,7 +4331,7 @@ const _path_provider_platform_interface = Package(
     PackageRef('plugin_platform_interface')
   ],
   devDependencies: [PackageRef('flutter_test')],
-  license: '''Copyright 2013 The Flutter Authors. All rights reserved.
+  license: '''Copyright 2013 The Flutter Authors
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -5228,19 +5228,20 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// shared_preferences_android 2.4.23
+/// shared_preferences_android 2.4.27
 const _shared_preferences_android = Package(
   name: 'shared_preferences_android',
   description: 'Android implementation of the shared_preferences plugin',
   repository:
       'https://github.com/flutter/packages/tree/main/packages/shared_preferences/shared_preferences_android',
   authors: [],
-  version: '2.4.23',
+  version: '2.4.27',
   spdxIdentifiers: ['BSD-3-Clause'],
   isMarkdown: false,
   isSdk: false,
   dependencies: [
     PackageRef('flutter'),
+    PackageRef('meta'),
     PackageRef('shared_preferences_platform_interface')
   ],
   devDependencies: [PackageRef('flutter_test')],
@@ -36546,7 +36547,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.''',
 );
 
-/// very_good_analysis 10.2.0
+/// very_good_analysis 10.3.0
 const _very_good_analysis = Package(
   name: 'very_good_analysis',
   description:
@@ -36554,7 +36555,7 @@ const _very_good_analysis = Package(
   homepage: 'https://github.com/VeryGoodOpenSource/very_good_analysis',
   repository: 'https://github.com/VeryGoodOpenSource/very_good_analysis',
   authors: [],
-  version: '10.2.0',
+  version: '10.3.0',
   spdxIdentifiers: ['MIT'],
   isMarkdown: false,
   isSdk: false,
@@ -36952,14 +36953,14 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
 );
 
-/// xml 7.0.1
+/// xml 6.6.1
 const _xml = Package(
   name: 'xml',
   description:
-      'Full-featured XML for Dart — DOM parsing, SAX streaming, XPath 3 querying, and a fluent builder API.',
-  repository: 'https://github.com/renggli/dart-xml',
+      'A lightweight library for parsing, traversing, querying, transforming and building XML documents.',
+  homepage: 'https://github.com/renggli/dart-xml',
   authors: [],
-  version: '7.0.1',
+  version: '6.6.1',
   spdxIdentifiers: ['MIT'],
   isMarkdown: false,
   isSdk: false,
@@ -36975,7 +36976,7 @@ const _xml = Package(
   ],
   license: '''The MIT License
 
-Copyright (c) 2006-2026 Lukas Renggli.
+Copyright (c) 2006-2025 Lukas Renggli.
 All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
