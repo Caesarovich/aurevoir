@@ -4,6 +4,8 @@ import 'package:bonsoir/bonsoir.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 /// Mapping of service types to their corresponding icons.
 const Map<String, IconData> serviceTypeIcons = {
   // Web services
@@ -77,18 +79,24 @@ class ResolvedServiceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListView.separated(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const minTileWidth = 460.0;
+        final crossAxisCount =
+            (constraints.maxWidth / minTileWidth).floor().clamp(1, 6);
+
+        return AlignedGridView.count(
+          crossAxisCount: crossAxisCount,
           itemCount: services.length,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          separatorBuilder: (context, index) => const SizedBox(height: 8),
           itemBuilder: (context, index) {
             return ResolvedServiceRow(service: services[index]);
           },
-        ),
-      ],
+        );
+      },
     );
   }
 }
