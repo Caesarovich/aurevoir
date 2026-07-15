@@ -3,11 +3,10 @@
 {
   android = {
     enable = true;
-    tools.version = "26.1.1";
     flutter.enable = true;
     platforms.version = [ "32" "34" "36" ];
-    buildTools.version = [ "35.0.0" ];
-    cmdLineTools.version = "11.0";
+    buildTools.version = [ "35.0.0" "36.0.0" ];
+    cmdLineTools.version = "16.0";
   };
 
   languages.dart.enable = true;
