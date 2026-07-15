@@ -48,6 +48,7 @@ const allDependencies = <Package>[
   _fixnum,
   _flutter,
   _flutter_launcher_icons,
+  _flutter_staggered_grid_view,
   _flutter_test,
   _flutter_web_plugins,
   _frontend_server_client,
@@ -134,6 +135,7 @@ const dependencies = <Package>[
   _bonsoir,
   _collection,
   _flutter,
+  _flutter_staggered_grid_view,
   _logger,
   _package_info_plus,
   _provider,
@@ -2496,6 +2498,42 @@ const _flutter_launcher_icons = Package(
   license: '''MIT License
 
 Copyright (c) 2019 Mark O'Sullivan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.''',
+);
+
+/// flutter_staggered_grid_view 0.7.0
+const _flutter_staggered_grid_view = Package(
+  name: 'flutter_staggered_grid_view',
+  description:
+      'Provides a collection of Flutter grids layouts (staggered, masonry, quilted, woven, etc.).',
+  homepage: 'https://github.com/letsar/flutter_staggered_grid_view',
+  authors: [],
+  version: '0.7.0',
+  spdxIdentifiers: ['MIT'],
+  isMarkdown: false,
+  isSdk: false,
+  dependencies: [PackageRef('flutter')],
+  devDependencies: [PackageRef('flutter_test')],
+  license: '''MIT License
+
+Copyright (c) 2018 Romain Rastel
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37334,6 +37372,7 @@ const _aurevoir = Package(
     PackageRef('bonsoir'),
     PackageRef('collection'),
     PackageRef('flutter'),
+    PackageRef('flutter_staggered_grid_view'),
     PackageRef('logger'),
     PackageRef('package_info_plus'),
     PackageRef('provider'),
