@@ -90,5 +90,8 @@ jobs:
       - name: Generate OSS licenses
         run: dart run dart_pubspec_licenses:generate
 
+      - name: Format OSS licenses
+        run: dart format lib/oss_licenses.dart
+
       - name: Verify OSS licenses are up to date
         run: git diff --exit-code -- lib/oss_licenses.dart
