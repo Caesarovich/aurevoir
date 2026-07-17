@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+final Uri _githubUri = Uri.parse('https://github.com/Caesarovich/aurevoir');
+final String _githubUrl = _githubUri.toString();
 
 /// A page that displays information about the app.
 class AboutPage extends StatefulWidget {
@@ -58,14 +62,22 @@ class _AboutPageState extends State<AboutPage> {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
-            const Row(
-              children: [
-                Icon(Icons.link),
-                SizedBox(width: 8),
-                Text(
-                  'GitHub: https://github.com/Caesarovich/aurevoir',
-                ),
-              ],
+            InkWell(
+              onTap: () {
+                unawaited(launchUrl(_githubUri));
+              },
+              child: Row(
+                children: [
+                  const Icon(Icons.link),
+                  const SizedBox(width: 8),
+                  Text(
+                    _githubUrl,
+                    style: const TextStyle(
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
