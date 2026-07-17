@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:aurevoir/app_logger.dart';
+import 'package:aurevoir/constants/mdns_services.dart';
 import 'package:bonsoir/bonsoir.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class ServiceTypeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  static const _protocolTypes = ['_tcp', '_udp'];
+  static const List<String> _protocolTypes = allTransportProtocols;
 
   // This is needed because the wildcard service discovery
   // returns the service in a different format.
