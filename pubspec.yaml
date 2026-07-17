@@ -41,6 +41,7 @@ dependencies:
   
 
 dev_dependencies:
+  csv: ^8.0.0
   dart_pubspec_licenses: 3.2.0
   flutter_launcher_icons: 0.14.4
   flutter_test:
