@@ -84,17 +84,15 @@ class BroadcastListPage extends StatelessWidget {
             },
             child: const Icon(Icons.add),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Center(
-              child: ListView.builder(
-                itemCount: model.broadcasts.length,
-                itemBuilder: (context, index) {
-                  return BroadcastedServiceRow(
-                    broadcast: model.broadcasts[index],
-                  );
-                },
-              ),
+          body: Center(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: model.broadcasts.length,
+              itemBuilder: (context, index) {
+                return BroadcastedServiceRow(
+                  broadcast: model.broadcasts[index],
+                );
+              },
             ),
           ),
         );

@@ -99,62 +99,60 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Center(
-          child: Consumer<SettingsProvider>(
-            builder: (context, settings, child) {
-              return ListView(
-                children: [
-                  _AppearanceSettings(settings: settings),
-                  const SizedBox(height: 16),
-                  _ServiceDiscoverySettings(settings: settings),
-                  const SizedBox(height: 16),
-                  _BroadcastingSettings(settings: settings),
-                  const SizedBox(height: 32),
-                  Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const AboutPage(),
-                            ),
-                          );
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.info),
-                            SizedBox(width: 8),
-                            Text('About'),
-                          ],
-                        ),
+      body: Center(
+        child: Consumer<SettingsProvider>(
+          builder: (context, settings, child) {
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                _AppearanceSettings(settings: settings),
+                const SizedBox(height: 16),
+                _ServiceDiscoverySettings(settings: settings),
+                const SizedBox(height: 16),
+                _BroadcastingSettings(settings: settings),
+                const SizedBox(height: 32),
+                Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const AboutPage(),
+                          ),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.info),
+                          SizedBox(width: 8),
+                          Text('About'),
+                        ],
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => const LicencesPage(),
-                            ),
-                          );
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.notes),
-                            SizedBox(width: 8),
-                            Text('Licences'),
-                          ],
-                        ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const LicencesPage(),
+                          ),
+                        );
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.notes),
+                          SizedBox(width: 8),
+                          Text('Licences'),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
-              );
-            },
-          ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

@@ -138,6 +138,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
           bodyContent = _noServicesMatchingSearchWidget;
         } else if (filteredServices.isNotEmpty) {
           bodyContent = ListView(
+            padding: const EdgeInsets.all(12),
             children: [
               ResolvedServiceList(services: sortedServices),
             ],
@@ -146,8 +147,6 @@ class _ServiceListPageState extends State<ServiceListPage> {
 
         return Scaffold(
           appBar: AppBar(
-            // titleSpacing: 0,
-            //elevation: 32,
             title: TextField(
               controller: _searchController,
               onChanged: _updateSearchQuery,
@@ -210,10 +209,7 @@ class _ServiceListPageState extends State<ServiceListPage> {
               const SizedBox(width: 8),
             ],
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(12),
-            child: bodyContent,
-          ),
+          body: bodyContent,
         );
       },
     );
